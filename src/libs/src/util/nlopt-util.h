@@ -30,6 +30,8 @@
 
 #include "nlopt.h"
 
+#define CRAN_COMPATIBILITY
+
 /* workaround for Solaris + gcc 3.4.x bug (see configure.ac) */
 #if defined(__GNUC__) && defined(REPLACEMENT_HUGE_VAL)
 #  undef HUGE_VAL
