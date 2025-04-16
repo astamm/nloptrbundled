@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * File:   init_rnlopt.c
+ * File:   init_nloptr.c
  * Author: Jelmer Ypma
  * Date:   3 October 2017
  *
@@ -45,7 +45,7 @@ static const R_CallMethodDef CallEntries[] = {
   {NULL, NULL, 0}
 };
 
-void R_init_rnlopt(DllInfo *info) {
+void R_init_nloptrbundled(DllInfo *info) {
     // Register C functions that can be used by external packages
     // linking to internal NLopt code from C.
     R_RegisterCCallable("nloptrbundled", "nlopt_algorithm_name",            (DL_FUNC) &nlopt_algorithm_name);
