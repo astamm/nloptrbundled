@@ -36,3 +36,5 @@ RoxygenNote: 7.3.2
 NeedsCompilation: yes
 UseLTO: yes
 SystemRequirements: cmake (>= 3.2.0)
+URL: https://github.com/astamm/nloptrbundled
+BugReports: https://github.com/astamm/nloptrbundled/issues
