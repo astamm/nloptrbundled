@@ -3,3 +3,5 @@
 ^LICENSE\.md$
 src/libs/.github
 src/libs/CITATION.bib
+^\.github$
+^README\.Rmd$
