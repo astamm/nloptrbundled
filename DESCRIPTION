@@ -1,0 +1,38 @@
+Package: nloptrbundled
+Title: Bundled NLopt C library for R
+Version: 0.0.1
+Authors@R: c(person("Jelmer", "Ypma", role = "aut",
+                    email = "uctpjyy@ucl.ac.uk"),
+             person(c("Steven", "G."), "Johnson", role = "aut",
+                    comment = "author of the NLopt C library"),
+             person("Aymeric", "Stamm", role = c("ctb", "cre"),
+                    email = "aymeric.stamm@cnrs.fr",
+                    comment = c(ORCID = "0000-0002-8725-3654")),
+             person(c("Hans", "W."), "Borchers", role = "ctb",
+                    email = "hwborchers@googlemail.com"),
+             person("Dirk", "Eddelbuettel", role = "ctb",
+                    email = "edd@debian.org"),
+             person("Brian", "Ripley", role = "ctb",
+                    comment = "build process on multiple OS"),
+             person("Kurt", "Hornik", role = "ctb",
+                    comment = "build process on multiple OS"),
+             person("Julien", "Chiquet", role = "ctb"),
+             person("Avraham", "Adler", role = "ctb", 
+                    email = "Avraham.Adler@gmail.com",
+                    comment = c(ORCID = "0000-0002-3039-0703")),
+             person("Xiongtao", "Dai", role = "ctb"))
+Description: Solve optimization problems using an R interface to 'NLopt'.
+    'NLopt' is a free/open-source library for nonlinear optimization, providing
+    a common interface for a number of different free optimization routines
+    available online as well as original implementations of various other
+    algorithms. See <https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/>
+    for more information on the available algorithms. This package bundles
+    'NLopt' 2.10.0 and requires 'CMake' as 'NLopt' is built from included
+    sources.
+License: LGPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+NeedsCompilation: yes
+UseLTO: yes
+SystemRequirements: cmake (>= 3.2.0)
