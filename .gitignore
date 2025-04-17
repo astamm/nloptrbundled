@@ -6,3 +6,4 @@
 .quarto
 inst/include/nloptr
 configure~
+inst/doc
