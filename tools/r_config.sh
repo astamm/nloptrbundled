@@ -15,7 +15,7 @@ if test -z "${CC}"; then
 
   exit 1
 fi
-echo set CC="$CC"
+echo set CC=$CC
 export CC
 
 CPPFLAGS=`"${R_BIN}" CMD config CPPFLAGS`
@@ -23,7 +23,7 @@ CFLAGS=`"${R_BIN}" CMD config CFLAGS`
 CPICFLAGS=`"${R_BIN}" CMD config CPICFLAGS`
 
 CFLAGS="$CPPFLAGS $CPICFLAGS $CFLAGS"
-echo set CFLAGS="$CFLAGS"
+echo set CFLAGS=$CFLAGS
 export CFLAGS
 
 CXX=`"${R_BIN}" CMD config CXX11`
@@ -39,7 +39,7 @@ if test -z "${CXX}"; then
 
   exit 1
 fi
-echo set CXX="$CXX"
+echo set CXX=$CXX
 export CXX
 
 CXXSTD=`"${R_BIN}" CMD config CXX11STD`
@@ -47,9 +47,9 @@ CXXFLAGS=`"${R_BIN}" CMD config CXX11FLAGS`
 CXXPICFLAGS=`"${R_BIN}" CMD config CXX11PICFLAGS`
 
 CXXFLAGS="$CXXSTD $CPPFLAGS $CXXPICFLAGS $CXXFLAGS"
-echo set CXXFLAGS="$CXXFLAGS"
+echo set CXXFLAGS=$CXXFLAGS
 export CXXFLAGS
 
 LDFLAGS=`"${R_BIN}" CMD config LDFLAGS`
-echo set LDFLAGS="$LDFLAGS"
+echo set LDFLAGS=$LDFLAGS
 export LDFLAGS

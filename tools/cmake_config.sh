@@ -39,4 +39,4 @@ if test -z "$CMAKE_BIN"; then
   exit 1
 fi
 
-echo set CMAKE_BIN="$CMAKE_BIN"
+echo set CMAKE_BIN=$CMAKE_BIN
