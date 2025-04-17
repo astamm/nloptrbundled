@@ -2,6 +2,10 @@
 
 CMAKE_BIN=$1
 
+echo "$CMAKE_BIN"
+echo "$R_HOME"
+echo "$R_ARCH_BIN"
+
 R_BIN_FOLDER="${R_HOME}"/bin"${R_ARCH_BIN}"
 R_BIN="${R_BIN_FOLDER}"/R
 RSCRIPT_BIN="${R_BIN_FOLDER}"/Rscript
