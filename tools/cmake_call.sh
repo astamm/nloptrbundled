@@ -47,6 +47,7 @@ ${CMAKE_BIN} \
   -D NLOPT_PYTHON=OFF \
   -D NLOPT_SWIG=OFF \
   -D NLOPT_TESTS=OFF \
+  -D USE_R_COMPATIBILITY=ON \
   ${CMAKE_ADD_AR} ${CMAKE_ADD_RANLIB} ../libs
 make -j${NCORES}
 make install
