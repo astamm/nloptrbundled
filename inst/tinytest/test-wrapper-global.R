@@ -155,10 +155,16 @@ isresControl <- nloptr(x0 = x0,
                                    maxeval = 2e4L, xtol_rel = 1e-6,
                                    population = 60))
 
-expect_silent(isres(x0, rbf, lb, ub, hin = hin, maxeval = 2e4L,
+expect_silent(isres(x0, rbf, lb, ub, hin = hin,
+                    maxeval = 2e4L,
+                    xtol_rel = 1e-6,
+                    population = 60,
                     deprecatedBehavior = FALSE))
 
-isresTest <- isres(x0, rbf, lb, ub, hin = hin, maxeval = 2e4L,
+isresTest <- isres(x0, rbf, lb, ub, hin = hin,
+                   maxeval = 2e4L,
+                   xtol_rel = 1e-6,
+                   population = 60,
                    deprecatedBehavior = FALSE)
 
 expect_equal(isresTest$par, isresControl$solution, tolerance = tol)
