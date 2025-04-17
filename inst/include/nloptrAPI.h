@@ -41,7 +41,7 @@
  * RET_TYPE FUNCNAME(ARGTYPE_1 ARGNAME 1, ARGTYPE_2 ARGNAME_2)
  * {
  *     static RET_TYPE(*fun)(ARGTYPE_1, ARGTYPE_2) = NULL;
- *     if (fun == NULL) fun = (RET_TYPE(*)(ARGTYPE_1, ARGTYPE_2)) R_GetCCallable("nloptr","FUNCNAME");
+ *     if (fun == NULL) fun = (RET_TYPE(*)(ARGTYPE_1, ARGTYPE_2)) R_GetCCallable("nloptrbundled","FUNCNAME");
  *     return fun(ARGNAME_1, ARGNAME_2);
  * }
  *
@@ -50,98 +50,98 @@
 inline NLOPT_EXTERN(const char *) nlopt_algorithm_name(nlopt_algorithm a)
 {
     static const char *(*fun)(nlopt_algorithm) = NULL;
-    if (fun == NULL) fun = (const char *(*)(nlopt_algorithm)) R_GetCCallable("nloptr","nlopt_algorithm_name");
+    if (fun == NULL) fun = (const char *(*)(nlopt_algorithm)) R_GetCCallable("nloptrbundled","nlopt_algorithm_name");
     return fun(a);
 }
 
 inline NLOPT_EXTERN(void) nlopt_srand(unsigned long seed)
 {
     static void(*fun)(unsigned long) = NULL;
-    if (fun == NULL) fun = (void(*)(unsigned long)) R_GetCCallable("nloptr","nlopt_srand");
+    if (fun == NULL) fun = (void(*)(unsigned long)) R_GetCCallable("nloptrbundled","nlopt_srand");
     return fun(seed);
 }
 
 inline NLOPT_EXTERN(void) nlopt_srand_time(void)
 {
     static void(*fun)(void) = NULL;
-    if (fun == NULL) fun = (void(*)(void)) R_GetCCallable("nloptr","nlopt_srand_time");
+    if (fun == NULL) fun = (void(*)(void)) R_GetCCallable("nloptrbundled","nlopt_srand_time");
     return fun();
 }
 
 inline NLOPT_EXTERN(void) nlopt_version(int *major, int *minor, int *bugfix)
 {
     static void(*fun)(int *, int *, int *) = NULL;
-    if (fun == NULL) fun = (void(*)(int *, int *, int *)) R_GetCCallable("nloptr","nlopt_version");
+    if (fun == NULL) fun = (void(*)(int *, int *, int *)) R_GetCCallable("nloptrbundled","nlopt_version");
     return fun(major, minor, bugfix);
 }
 
 inline NLOPT_EXTERN(nlopt_opt) nlopt_create(nlopt_algorithm algorithm, unsigned n)
 {
     static nlopt_opt(*fun)(nlopt_algorithm, unsigned) = NULL;
-    if (fun == NULL) fun = (nlopt_opt(*)(nlopt_algorithm, unsigned)) R_GetCCallable("nloptr","nlopt_create");
+    if (fun == NULL) fun = (nlopt_opt(*)(nlopt_algorithm, unsigned)) R_GetCCallable("nloptrbundled","nlopt_create");
     return fun(algorithm, n);
 }
 
 inline NLOPT_EXTERN(void) nlopt_destroy(nlopt_opt opt)
 {
     static void(*fun)(nlopt_opt) = NULL;
-    if (fun == NULL) fun = (void(*)(nlopt_opt)) R_GetCCallable("nloptr","nlopt_destroy");
+    if (fun == NULL) fun = (void(*)(nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_destroy");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_opt) nlopt_copy(const nlopt_opt opt)
 {
     static nlopt_opt(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_opt(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_copy");
+    if (fun == NULL) fun = (nlopt_opt(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_copy");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_optimize(nlopt_opt opt, double *x, double *opt_f)
 {
     static nlopt_result(*fun)(nlopt_opt, double *, double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double *, double *)) R_GetCCallable("nloptr","nlopt_optimize");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double *, double *)) R_GetCCallable("nloptrbundled","nlopt_optimize");
     return fun(opt, x, opt_f);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_min_objective(nlopt_opt opt, nlopt_func f, void *f_data)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, void *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *)) R_GetCCallable("nloptr","nlopt_set_min_objective");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *)) R_GetCCallable("nloptrbundled","nlopt_set_min_objective");
     return fun(opt, f, f_data);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_max_objective(nlopt_opt opt, nlopt_func f, void *f_data)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, void *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *)) R_GetCCallable("nloptr","nlopt_set_max_objective");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *)) R_GetCCallable("nloptrbundled","nlopt_set_max_objective");
     return fun(opt, f, f_data);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_precond_min_objective(nlopt_opt opt, nlopt_func f, nlopt_precond pre, void *f_data)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, nlopt_precond, void *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *)) R_GetCCallable("nloptr","nlopt_set_precond_min_objective");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *)) R_GetCCallable("nloptrbundled","nlopt_set_precond_min_objective");
     return fun(opt, f, pre, f_data);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_precond_max_objective(nlopt_opt opt, nlopt_func f, nlopt_precond pre, void *f_data)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, nlopt_precond, void *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *)) R_GetCCallable("nloptr","nlopt_set_precond_max_objective");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *)) R_GetCCallable("nloptrbundled","nlopt_set_precond_max_objective");
     return fun(opt, f, pre, f_data);
 }
 
 inline NLOPT_EXTERN(nlopt_algorithm) nlopt_get_algorithm(const nlopt_opt opt)
 {
     static nlopt_algorithm(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_algorithm(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_algorithm");
+    if (fun == NULL) fun = (nlopt_algorithm(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_algorithm");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(unsigned) nlopt_get_dimension(const nlopt_opt opt)
 {
     static unsigned(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_dimension");
+    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_dimension");
     return fun(opt);
 }
 
@@ -150,49 +150,49 @@ inline NLOPT_EXTERN(unsigned) nlopt_get_dimension(const nlopt_opt opt)
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_lower_bounds(nlopt_opt opt, const double *lb)
 {
     static nlopt_result(*fun)(nlopt_opt, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptr","nlopt_set_lower_bounds");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptrbundled","nlopt_set_lower_bounds");
     return fun(opt, lb);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_lower_bounds1(nlopt_opt opt, double lb)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_lower_bounds1");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_lower_bounds1");
     return fun(opt, lb);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_get_lower_bounds(const nlopt_opt opt, double *lb)
 {
     static nlopt_result(*fun)(const nlopt_opt, double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, double *)) R_GetCCallable("nloptr","nlopt_get_lower_bounds");
+    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, double *)) R_GetCCallable("nloptrbundled","nlopt_get_lower_bounds");
     return fun(opt, lb);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_upper_bounds(nlopt_opt opt, const double *ub)
 {
     static nlopt_result(*fun)(nlopt_opt, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptr","nlopt_set_upper_bounds");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptrbundled","nlopt_set_upper_bounds");
     return fun(opt, ub);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_upper_bounds1(nlopt_opt opt, double ub)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_upper_bounds1");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_upper_bounds1");
     return fun(opt, ub);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_get_upper_bounds(const nlopt_opt opt, double *ub)
 {
     static nlopt_result(*fun)(const nlopt_opt, double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, double *)) R_GetCCallable("nloptr","nlopt_get_upper_bounds");
+    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, double *)) R_GetCCallable("nloptrbundled","nlopt_get_upper_bounds");
     return fun(opt, ub);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_remove_inequality_constraints(nlopt_opt opt)
 {
     static nlopt_result(*fun)(nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptr","nlopt_remove_inequality_constraints");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_remove_inequality_constraints");
     return fun(opt);
 }
 
@@ -202,7 +202,7 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_inequality_constraint(nlopt_opt opt,
              double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, void *, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *, double)) R_GetCCallable("nloptr","nlopt_add_inequality_constraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *, double)) R_GetCCallable("nloptrbundled","nlopt_add_inequality_constraint");
     return fun(opt, fc, fc_data, tol);
 }
 
@@ -211,7 +211,7 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_precond_inequality_constraint(
         double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, nlopt_precond, void *, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *, double)) R_GetCCallable("nloptr","nlopt_add_precond_inequality_constraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *, double)) R_GetCCallable("nloptrbundled","nlopt_add_precond_inequality_constraint");
     return fun(opt, fc, pre, fc_data, tol);
 }
 
@@ -222,14 +222,14 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_inequality_mconstraint(nlopt_opt opt
              const double *tol)
 {
     static nlopt_result(*fun)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *)) R_GetCCallable("nloptr","nlopt_add_inequality_mconstraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *)) R_GetCCallable("nloptrbundled","nlopt_add_inequality_mconstraint");
     return fun(opt, m, fc, fc_data, tol);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_remove_equality_constraints(nlopt_opt opt)
 {
     static nlopt_result(*fun)(nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptr","nlopt_remove_equality_constraints");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_remove_equality_constraints");
     return fun(opt);
 }
 
@@ -239,7 +239,7 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_equality_constraint(nlopt_opt opt,
              double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, void *, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *, double)) R_GetCCallable("nloptr","nlopt_add_equality_constraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, void *, double)) R_GetCCallable("nloptrbundled","nlopt_add_equality_constraint");
     return fun(opt, h, h_data, tol);
 }
 
@@ -248,7 +248,7 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_precond_equality_constraint(
         double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, nlopt_func, nlopt_precond, void *, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *, double)) R_GetCCallable("nloptr","nlopt_add_precond_equality_constraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, nlopt_func, nlopt_precond, void *, double)) R_GetCCallable("nloptrbundled","nlopt_add_precond_equality_constraint");
     return fun(opt, h, pre, h_data, tol);
 }
 
@@ -259,7 +259,7 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_equality_mconstraint(nlopt_opt opt,
              const double *tol)
 {
     static nlopt_result(*fun)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *)) R_GetCCallable("nloptr","nlopt_add_equality_mconstraint");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned, nlopt_mfunc, void *, const double *)) R_GetCCallable("nloptrbundled","nlopt_add_equality_mconstraint");
     return fun(opt, m, h, h_data, tol);
 }
 
@@ -268,126 +268,126 @@ inline NLOPT_EXTERN(nlopt_result) nlopt_add_equality_mconstraint(nlopt_opt opt,
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_stopval(nlopt_opt opt, double stopval)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_stopval");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_stopval");
     return fun(opt, stopval);
 }
 
 inline NLOPT_EXTERN(double) nlopt_get_stopval(const nlopt_opt opt)
 {
     static double(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_stopval");
+    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_stopval");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_ftol_rel(nlopt_opt opt, double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_ftol_rel");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_ftol_rel");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(double) nlopt_get_ftol_rel(const nlopt_opt opt)
 {
     static double(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_ftol_rel");
+    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_ftol_rel");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_ftol_abs(nlopt_opt opt, double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_ftol_abs");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_ftol_abs");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(double) nlopt_get_ftol_abs(const nlopt_opt opt)
 {
     static double(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_ftol_abs");
+    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_ftol_abs");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_xtol_rel(nlopt_opt opt, double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_xtol_rel");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_xtol_rel");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(double) nlopt_get_xtol_rel(const nlopt_opt opt)
 {
     static double(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_xtol_rel");
+    if (fun == NULL) fun = (double(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_xtol_rel");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_xtol_abs1(nlopt_opt opt, double tol)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_xtol_abs1");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_xtol_abs1");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_xtol_abs(nlopt_opt opt, const double *tol)
 {
     static nlopt_result(*fun)(nlopt_opt, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptr","nlopt_set_xtol_abs");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptrbundled","nlopt_set_xtol_abs");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_get_xtol_abs(const nlopt_opt opt, double *tol)
 {
     static nlopt_result(*fun)(nlopt_opt, double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double *)) R_GetCCallable("nloptr","nlopt_get_xtol_abs");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double *)) R_GetCCallable("nloptrbundled","nlopt_get_xtol_abs");
     return fun(opt, tol);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_maxeval(nlopt_opt opt, int maxeval)
 {
     static nlopt_result(*fun)(nlopt_opt, int) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, int)) R_GetCCallable("nloptr","nlopt_set_maxeval");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, int)) R_GetCCallable("nloptrbundled","nlopt_set_maxeval");
     return fun(opt, maxeval);
 }
 
 inline NLOPT_EXTERN(int) nlopt_get_maxeval(const nlopt_opt opt)
 {
     static int(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (int(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_maxeval");
+    if (fun == NULL) fun = (int(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_maxeval");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_maxtime(nlopt_opt opt, double maxtime)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_maxtime");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_maxtime");
     return fun(opt, maxtime);
 }
 
 inline NLOPT_EXTERN(double) nlopt_get_maxtime(const nlopt_opt opt)
 {
     static double(*fun)(nlopt_opt) = NULL;
-    if (fun == NULL) fun = (double(*)(nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_maxtime");
+    if (fun == NULL) fun = (double(*)(nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_maxtime");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_force_stop(nlopt_opt opt)
 {
     static nlopt_result(*fun)(nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptr","nlopt_force_stop");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_force_stop");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_force_stop(nlopt_opt opt, int val)
 {
     static nlopt_result(*fun)(nlopt_opt, int) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, int)) R_GetCCallable("nloptr","nlopt_set_force_stop");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, int)) R_GetCCallable("nloptrbundled","nlopt_set_force_stop");
     return fun(opt, val);
 }
 
 inline NLOPT_EXTERN(int) nlopt_get_force_stop(const nlopt_opt opt)
 {
     static int(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (int(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_force_stop");
+    if (fun == NULL) fun = (int(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_force_stop");
     return fun(opt);
 }
 
@@ -396,63 +396,63 @@ inline NLOPT_EXTERN(int) nlopt_get_force_stop(const nlopt_opt opt)
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_local_optimizer(nlopt_opt opt, const nlopt_opt local_opt)
 {
     static nlopt_result(*fun)(nlopt_opt, const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const nlopt_opt)) R_GetCCallable("nloptr","nlopt_set_local_optimizer");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_set_local_optimizer");
     return fun(opt, local_opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_population(nlopt_opt opt, unsigned pop)
 {
     static nlopt_result(*fun)(nlopt_opt, unsigned) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned)) R_GetCCallable("nloptr","nlopt_set_population");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned)) R_GetCCallable("nloptrbundled","nlopt_set_population");
     return fun(opt, pop);
 }
 
 inline NLOPT_EXTERN(unsigned) nlopt_get_population(const nlopt_opt opt)
 {
     static unsigned(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_population");
+    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_population");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_vector_storage(nlopt_opt opt, unsigned dim)
 {
     static nlopt_result(*fun)(nlopt_opt, unsigned) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned)) R_GetCCallable("nloptr","nlopt_set_vector_storage");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, unsigned)) R_GetCCallable("nloptrbundled","nlopt_set_vector_storage");
     return fun(opt, dim);
 }
 
 inline NLOPT_EXTERN(unsigned) nlopt_get_vector_storage(const nlopt_opt opt)
 {
     static unsigned(*fun)(const nlopt_opt) = NULL;
-    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptr","nlopt_get_vector_storage");
+    if (fun == NULL) fun = (unsigned(*)(const nlopt_opt)) R_GetCCallable("nloptrbundled","nlopt_get_vector_storage");
     return fun(opt);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_default_initial_step(nlopt_opt opt, const double *x)
 {
     static nlopt_result(*fun)(nlopt_opt, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptr","nlopt_set_default_initial_step");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptrbundled","nlopt_set_default_initial_step");
     return fun(opt, x);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_initial_step(nlopt_opt opt, const double *dx)
 {
     static nlopt_result(*fun)(nlopt_opt, const double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptr","nlopt_set_initial_step");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, const double *)) R_GetCCallable("nloptrbundled","nlopt_set_initial_step");
     return fun(opt, dx);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_set_initial_step1(nlopt_opt opt, double dx)
 {
     static nlopt_result(*fun)(nlopt_opt, double) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptr","nlopt_set_initial_step1");
+    if (fun == NULL) fun = (nlopt_result(*)(nlopt_opt, double)) R_GetCCallable("nloptrbundled","nlopt_set_initial_step1");
     return fun(opt, dx);
 }
 
 inline NLOPT_EXTERN(nlopt_result) nlopt_get_initial_step(const nlopt_opt opt, const double *x, double *dx)
 {
     static nlopt_result(*fun)(const nlopt_opt, const double *, double *) = NULL;
-    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, const double *, double *)) R_GetCCallable("nloptr","nlopt_get_initial_step");
+    if (fun == NULL) fun = (nlopt_result(*)(const nlopt_opt, const double *, double *)) R_GetCCallable("nloptrbundled","nlopt_get_initial_step");
     return fun(opt, x, dx);
 }
 

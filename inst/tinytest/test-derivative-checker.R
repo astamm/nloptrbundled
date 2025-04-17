@@ -40,10 +40,10 @@ a <- c(0.75499595934525132, 0.9649918619543314, 0.041430773446336389,
        0.7851746492087841)
 
 # Test nloptr:::finite.diff on multivariate scalar function
-expect_equal(nloptr:::finite.diff(f, 1:10, a = a), f_grad(1:10, a = a),
+expect_equal(nloptrbundled:::finite.diff(f, 1:10, a = a), f_grad(1:10, a = a),
              tolerance = tol)
 
-expect_equal(nloptr:::finite.diff(f, 1:10, a = a), nl.grad(1:10, f, a = a),
+expect_equal(nloptrbundled:::finite.diff(f, 1:10, a = a), nl.grad(1:10, f, a = a),
              tolerance = tol)
 
 # Test nloptr:::finite.diff on multivariate Jacobian of vector function
@@ -60,7 +60,7 @@ jac1 <- function(x) {
          nrow = 2L, byrow = TRUE)
 }
 
-expect_equal(nloptr:::finite.diff(fn1, x0), jac1(x0), tolerance = tol)
+expect_equal(nloptrbundled:::finite.diff(fn1, x0), jac1(x0), tolerance = tol)
 
 res <- suppressMessages(
   check.derivatives(
