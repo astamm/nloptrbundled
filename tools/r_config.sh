@@ -2,10 +2,6 @@
 
 R_BIN=$1
 
-echo "IN R_CONFIGURE"
-echo $R_BIN
-echo "$R_BIN"
-
 CC=`"${R_BIN}" CMD config CC`
 if test -z "${CC}"; then
   echo ""
@@ -21,10 +17,6 @@ if test -z "${CC}"; then
 fi
 echo set CC=$CC
 export CC
-
-echo $CC
-echo "$CC"
-echo "END R_CONFIGURE"
 
 CPPFLAGS=`"${R_BIN}" CMD config CPPFLAGS`
 CFLAGS=`"${R_BIN}" CMD config CFLAGS`
