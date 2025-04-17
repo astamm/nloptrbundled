@@ -11,7 +11,7 @@
 #   2023-08-23: Change _stdout to _stdout and _lte to _true
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 tol <- 8e-8
 

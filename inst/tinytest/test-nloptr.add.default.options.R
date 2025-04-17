@@ -10,7 +10,7 @@
 # Changelog:
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 fn <- function(x) x ^ 2 - 4 * x + 4
 

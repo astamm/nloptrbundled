@@ -15,7 +15,7 @@
 #       example (Avraham Adler).
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 depMess <- paste("The old behavior for hin >= 0 has been deprecated. Please",
                  "restate the inequality to be <=0. The ability to use the old",

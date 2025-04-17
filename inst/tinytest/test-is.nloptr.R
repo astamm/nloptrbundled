@@ -10,7 +10,7 @@
 # Changelog:
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 ctlNM <- list(algorithm = "NLOPT_LN_NELDERMEAD", xtol_rel = 1e-8)
 ctlLB <- list(algorithm = "NLOPT_LD_LBFGS", xtol_rel = 1e-8)

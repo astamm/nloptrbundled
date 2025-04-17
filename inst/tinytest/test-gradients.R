@@ -10,7 +10,7 @@
 # Changelog:
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 tol <- sqrt(.Machine$double.eps)
 

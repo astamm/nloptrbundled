@@ -11,7 +11,7 @@
 #   2023-08-23: Change _output to _stdout
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 # DirectL is not identical when calling randomized = TRUE. May be an issue with
 # the randomization at the C level. For now, need to pass this tolerance for it

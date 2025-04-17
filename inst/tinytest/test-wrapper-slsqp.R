@@ -11,7 +11,7 @@
 #   2023-08-23: Change _output to _stdout
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 tol <- sqrt(.Machine$double.eps)
 

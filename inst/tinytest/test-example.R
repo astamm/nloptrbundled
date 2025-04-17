@@ -27,7 +27,7 @@
 #   2019-12-12: Corrected warnings and using updated testtthat framework (AA)
 #   2023-02-07: Remove wrapping tests in "test_that" to reduce duplication. (AA)
 
-library(nloptr)
+library(nloptrbundled)
 
 tol <- sqrt(.Machine$double.eps)
 

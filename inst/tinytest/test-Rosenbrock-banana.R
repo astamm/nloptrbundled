@@ -15,7 +15,7 @@
 #               more details.
 #
 
-library(nloptr)
+library(nloptrbundled)
 tol <- sqrt(.Machine$double.eps)
 
 # Rosenbrock banana function (rbf)

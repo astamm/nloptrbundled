@@ -53,16 +53,15 @@ thing is that you add the [CMake](https://cmake.org) binary to your
   Use* which you can click on to have proper instructions on how to
   update your `PATH`. Note that the location of the
   [CMake](https://cmake.org) binary is always
-  `/Applications/CMake.app/Contents/bin/cmake`. Hence,
-  [**nloptr**](https://astamm.github.io/nloptr/) knows where to find it
-  even if you do not update your `PATH`.
+  `/Applications/CMake.app/Contents/bin/cmake`. Hence, **nloptrbundled**
+  knows where to find it even if you do not update your `PATH`.
 - On Linux, it will be automatically added unless you specifically
   change the default installation directory before building
   [CMake](https://cmake.org).
 
 Alternatively, you can set an environment variable `CMAKE_BIN` pointing
 to a [CMake](https://cmake.org) binary of your liking on your computer
-for [**nloptr**](https://astamm.github.io/nloptr/) to use.
+for **nloptrbundled** to use.
 
 ### Installing **nloptrbundled**
 

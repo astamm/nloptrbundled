@@ -10,7 +10,7 @@
 # Changelog:
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 opts <- list(
   stopval = -Inf,            # stop minimization at this value

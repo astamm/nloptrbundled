@@ -16,7 +16,7 @@
 #               (Avraham Adler)
 #
 
-library(nloptr)
+library(nloptrbundled)
 tol <- 1e-3 # Stochastic algorithms require a weaker tolerance
 
 depMess <- paste("The old behavior for hin >= 0 has been deprecated. Please",

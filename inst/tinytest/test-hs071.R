@@ -31,7 +31,7 @@
 #   2023-02-07: Remove wrapping tests in "test_that" to reduce duplication. (AA)
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 # f(x) = x1*x4*(x1 + x2 + x3) + x3
 eval_f <- function(x) {

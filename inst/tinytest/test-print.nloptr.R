@@ -11,7 +11,7 @@
 #   2023-08-23: Convert _output to _stdout for tinytest
 #
 
-library(nloptr)
+library(nloptrbundled)
 options(digits=7)
 
 x0 <- c(3, 3)

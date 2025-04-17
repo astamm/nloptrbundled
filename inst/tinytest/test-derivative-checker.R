@@ -17,7 +17,7 @@
 #   2023-08-23: Prefix finite.diff with nloptr::: as part of move to tinytest
 #
 
-library(nloptr)
+library(nloptrbundled)
 
 # Test derivative checker.
 
