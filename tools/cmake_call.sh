@@ -10,9 +10,15 @@ R_BIN_FOLDER=${R_HOME}/bin${R_ARCH_BIN}
 R_BIN=${R_BIN_FOLDER}/R
 RSCRIPT_BIN=${R_BIN_FOLDER}/Rscript
 
+echo $R_BIN
+echo "$R_BIN"
+echo $RSCRIPT_BIN
+echo "$RSCRIPT_BIN"
+
 NCORES=`${RSCRIPT_BIN} -e "cat(min(2, parallel::detectCores(logical = FALSE), na.rm=TRUE))"`
 
-. tools/r_config.sh ${R_BIN}
+dot() { file=$1; shift; . "$file"; }
+dot tools/r_config.sh ${R_BIN}
 
 ${RSCRIPT_BIN} --vanilla -e 'getRversion() > "4.0.0"' | grep TRUE > /dev/null
 if [ $? -eq 0 ]; then
