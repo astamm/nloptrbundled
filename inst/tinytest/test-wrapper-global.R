@@ -164,7 +164,7 @@ expect_silent(isres(x0, rbf, lb, ub, hin = hin,
 isresTest <- isres(x0, rbf, lb, ub, hin = hin,
                    maxeval = 2e4L,
                    xtol_rel = 1e-6,
-                   population = 60,
+                   pop.size = 60,
                    deprecatedBehavior = FALSE)
 
 expect_equal(isresTest$par, isresControl$solution, tolerance = tol)
