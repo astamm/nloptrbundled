@@ -27,7 +27,7 @@ Description: Solve optimization problems using an R interface to 'NLopt'.
     available online as well as original implementations of various other
     algorithms. See <https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/>
     for more information on the available algorithms. This package bundles
-    'NLopt' 2.10.0 and requires 'CMake' (>= 3.18.0) as 'NLopt' is built from
+    'NLopt' 2.10.0 and requires 'CMake' (>= 3.15.0) as 'NLopt' is built from
     included sources.
 License: LGPL (>= 3)
 Encoding: UTF-8
@@ -35,7 +35,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 NeedsCompilation: yes
 UseLTO: yes
-SystemRequirements: cmake (>= 3.18.0)
+SystemRequirements: cmake (>= 3.15.0)
 URL: https://github.com/astamm/nloptrbundled
 BugReports: https://github.com/astamm/nloptrbundled/issues
 Suggests: 

@@ -37,11 +37,11 @@ binary of [CMake](https://cmake.org) stored in environment variable
 `CMAKE_BIN` is searched on the `PATH` and, alternatively, on a
 macOS-specific location. If that variable cannot be set, install will
 abort suggesting ways of installing [CMake](https://cmake.org). The
-minimal version requirement on `cmake` is `>= 3.18.0`.
+minimal version requirement on `cmake` is `>= 3.15.0`.
 
 ### Installing [CMake](https://cmake.org)
 
-Minimal version requirement for `cmake` is `3.18.0`.
+Minimal version requirement for `cmake` is `3.15.0`.
 
 You can install [CMake](https://cmake.org) by following [CMake
 installation instructions](https://cmake.org/resources/). The important

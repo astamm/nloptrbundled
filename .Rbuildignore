@@ -6,3 +6,4 @@ src/libs/CITATION.bib
 ^\.github$
 ^README\.Rmd$
 ^codecov\.yml$
+inst/include/nloptr
