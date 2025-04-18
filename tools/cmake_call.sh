@@ -25,9 +25,6 @@ else
   CMAKE_ADD_RANLIB=""
 fi
 
-echo "$CMAKE_ADD_AR"
-echo "$CMAKE_ADD_RANLIB"
-
 cd src
 mkdir nlopt
 mkdir -p build && cd build
