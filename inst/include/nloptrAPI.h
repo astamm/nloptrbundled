@@ -33,7 +33,7 @@
 #include <R.h>
 #include <Rinternals.h>
 
-#include <nloptr/nlopt.h>
+#include "nloptr/nlopt.h"
 
 /*
  * C functions can be exposed using the following template:
