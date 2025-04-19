@@ -32,7 +32,7 @@ information on how to cite NLopt and the algorithms you use.
 ## Installation
 
 [NLopt](https://nlopt.readthedocs.io/en/latest/) 2.10.0 is built from
-included sources using [CMake](https://cmake.org). In this case, a
+included sources using [CMake](https://cmake.org). Specifically, a
 binary of [CMake](https://cmake.org) stored in environment variable
 `CMAKE_BIN` is searched on the `PATH` and, alternatively, on a
 macOS-specific location. If that variable cannot be set, install will
@@ -40,8 +40,6 @@ abort suggesting ways of installing [CMake](https://cmake.org). The
 minimal version requirement on `cmake` is `>= 3.15.0`.
 
 ### Installing [CMake](https://cmake.org)
-
-Minimal version requirement for `cmake` is `3.15.0`.
 
 You can install [CMake](https://cmake.org) by following [CMake
 installation instructions](https://cmake.org/resources/). The important
