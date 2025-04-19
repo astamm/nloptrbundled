@@ -17,7 +17,6 @@
 #       (Avraham Adler)
 #
 
-
 #' Numerical Gradients and Jacobians
 #'
 #' Provides numerical gradients and Jacobians.
@@ -56,12 +55,11 @@
 #'   ## [3,]  0  0
 #'   ## [4,]  0  0
 #'
-nl.grad <- function(x0, fn, heps = .Machine$double.eps ^ (1 / 3), ...) {
-
+nl.grad <- function(x0, fn, heps = .Machine$double.eps^(1 / 3), ...) {
   if (!is.numeric(x0)) stop("Argument 'x0' must be a numeric value.")
 
   fun <- match.fun(fn)
-  fn  <- function(x) fun(x, ...)
+  fn <- function(x) fun(x, ...)
   if (length(fn(x0)) != 1)
     stop("Function 'f' must be a scalar function (return a single value).")
 
@@ -77,14 +75,13 @@ nl.grad <- function(x0, fn, heps = .Machine$double.eps ^ (1 / 3), ...) {
 }
 
 #' @export
-nl.jacobian <- function(x0, fn, heps = .Machine$double.eps ^ (1 / 3), ...) {
-
+nl.jacobian <- function(x0, fn, heps = .Machine$double.eps^(1 / 3), ...) {
   n <- length(x0)
   if (!is.numeric(x0) || n == 0)
     stop("Argument 'x' must be a non-empty numeric vector.")
 
   fun <- match.fun(fn)
-  fn  <- function(x) fun(x, ...)
+  fn <- function(x) fun(x, ...)
 
   jacob <- matrix(NA_real_, length(fn(x0)), n)
   hh <- rep(0, n)
