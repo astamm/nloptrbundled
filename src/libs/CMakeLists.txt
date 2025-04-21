@@ -46,7 +46,7 @@ option (NLOPT_JAVA "build java bindings" ON)
 option (NLOPT_SWIG "use SWIG to build bindings" ON)
 option (NLOPT_LUKSAN "enable LGPL Luksan solvers" ON)
 option (NLOPT_TESTS "build unit tests" OFF)
-option (USE_R_COMPATIBILITY "compile with R compatibility functions only" OFF)
+option (USE_R_COMPATIBILITY "compile with R-compatible functions only" OFF)
 
 if (NLOPT_FORTRAN)
   enable_language (Fortran)

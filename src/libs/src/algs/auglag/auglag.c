@@ -179,15 +179,21 @@ nlopt_result auglag_minimize(int n, nlopt_func f, void *f_data,
      else
 	  d.rho = 1; /* whatever, doesn't matter */
 
-#ifndef CRAN_COMPATIBILITY
      if (auglag_verbose) {
+#ifdef CRAN_COMPATIBILITY
+       Rprintf("auglag: initial rho=%g\nauglag initial lambda=", d.rho);
+       for (i = 0; i < d.pp; ++i) Rprintf(" %g", d.lambda[i]);
+       Rprintf("\nauglag initial mu = ");
+       for (i = 0; i < d.mm; ++i) Rprintf(" %g", d.mu[i]);
+       Rprintf("\n");
+#else
        printf("auglag: initial rho=%g\nauglag initial lambda=", d.rho);
        for (i = 0; i < d.pp; ++i) printf(" %g", d.lambda[i]);
        printf("\nauglag initial mu = ");
        for (i = 0; i < d.mm; ++i) printf(" %g", d.mu[i]);
        printf("\n");
-     }
 #endif
+     }
 
      do {
 	  double prev_ICM = ICM;
