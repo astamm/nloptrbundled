@@ -30,7 +30,8 @@
 
 #include "nlopt.h"
 
-#ifdef CRAN_COMPATIBILITY
+#ifdef NLOPT_R
+#include <R_ext/Error.h>
 #include <R_ext/Print.h>
 #endif
 
@@ -108,7 +109,7 @@ extern "C" {
     extern char *nlopt_vsprintf(char *p, const char *format, va_list ap);
     extern void nlopt_stop_msg(const nlopt_stopping * s, const char *format, ...)
 #ifdef __GNUC__
-#ifndef CRAN_COMPATIBILITY
+#ifndef NLOPT_R
         __attribute__ ((format(printf, 2, 3)))
 #endif
 #endif
