@@ -3,3 +3,4 @@
 # the repo. If this file has CRLF line endings, R's check process will complain.
 configure.ac text eol=lf
 src/nlopt/include/nlopt.hpp text eol=lf
+inst/include/nloptr/nlopt.hpp text eol=lf
