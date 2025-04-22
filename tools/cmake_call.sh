@@ -25,6 +25,15 @@ else
   CMAKE_ADD_RANLIB=""
 fi
 
+${RSCRIPT_BIN} --vanilla -e 'Sys.info()["sysname"] == "Darwin"' | grep TRUE > /dev/null
+if [ $? -eq 0 ]; then
+  SDK_PATH=`xcrun --sdk macosx --show-sdk-path`
+ 	AR=`which "$AR"`
+  CMAKE_ADD_OSX_SYSROOT="-D CMAKE_OSX_SYSROOT=${SDK_PATH}"
+else
+  CMAKE_ADD_OSX_SYSROOT=""
+fi
+
 cd src
 mkdir nlopt
 mkdir -p build && cd build
@@ -45,7 +54,7 @@ ${CMAKE_BIN} \
   -D NLOPT_SWIG=OFF \
   -D NLOPT_TESTS=OFF \
   -D NLOPT_R_BINDIR=${R_BIN_FOLDER} \
-  ${CMAKE_ADD_AR} ${CMAKE_ADD_RANLIB} ../libs
+  ${CMAKE_ADD_AR} ${CMAKE_ADD_RANLIB} ${CMAKE_ADD_OSX_SYSROOT} ../libs
 make -j${NCORES}
 make install
 cd ..
