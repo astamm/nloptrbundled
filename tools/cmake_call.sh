@@ -59,3 +59,8 @@ make -j${NCORES}
 make install
 cd ..
 rm -fr build
+lib_folder=`ls -d nlopt/lib*`
+echo "Moving ${lib_folder} to nlopt/lib"
+if [ ${lib_folder} != "nlopt/lib" ]; then
+  mv ${lib_folder} nlopt/lib
+fi
