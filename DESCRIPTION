@@ -1,5 +1,5 @@
 Package: nloptrbundled
-Title: Bundled NLopt C library for R
+Title: Bundled NLopt C Library for R
 Version: 0.0.1
 Authors@R: c(person("Jelmer", "Ypma", role = "aut",
                     email = "uctpjyy@ucl.ac.uk"),
