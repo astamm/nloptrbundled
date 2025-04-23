@@ -73,7 +73,7 @@ nlopt_opt NLOPT_STDCALL nlopt_create(nlopt_algorithm algorithm, unsigned n)
     if (((int) algorithm) < 0 || algorithm >= NLOPT_NUM_ALGORITHMS)
         return NULL;
 
-    opt = (nlopt_opt) malloc(sizeof(struct nlopt_opt_s));
+    opt = (nlopt_opt) malloc(sizeof *opt);
     if (opt) {
         opt->algorithm = algorithm;
         opt->n = n;
