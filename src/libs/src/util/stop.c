@@ -185,13 +185,13 @@ void nlopt_eval_constraint(double *result, double *grad, const nlopt_constraint 
 
 char *nlopt_vsprintf(char *p, const char *format, va_list ap)
 {
-#ifndef NLOPT_R
-    if (!format)
-      abort();
-#else
-    if (!format)
-      Rf_error("nlopt_vsprintf: format string is NULL");
-#endif
+// #ifndef NLOPT_R
+//     if (!format)
+//       abort();
+// #else
+//     if (!format)
+//       Rf_error("nlopt_vsprintf: format string is NULL");
+// #endif
 
     size_t len = strlen(format) + 128;
     int ret;
