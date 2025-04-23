@@ -185,6 +185,14 @@ void nlopt_eval_constraint(double *result, double *grad, const nlopt_constraint 
 
 char *nlopt_vsprintf(char *p, const char *format, va_list ap)
 {
+#ifndef NLOPT_R
+    if (!format)
+      abort();
+#else
+    if (!format)
+      Rf_error("nlopt_vsprintf: format string is NULL");
+#endif
+
     size_t len = strlen(format) + 128;
     int ret;
 
@@ -192,13 +200,9 @@ char *nlopt_vsprintf(char *p, const char *format, va_list ap)
 #ifndef NLOPT_R
     if (!p)
         abort();
-    if (!format)
-        abort();
 #else
     if (!p)
         Rf_error("Memory allocation failed in nlopt_vsprintf");
-    if (!format)
-        Rf_error("nlopt_vsprintf: format string is NULL");
 #endif
 
     /* TODO: check HAVE_VSNPRINTF, and fallback to vsprintf otherwise */
