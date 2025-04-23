@@ -685,9 +685,7 @@ nlopt_opt getOptions(SEXP R_options, int num_controls, int *flag_encountered_err
   nlopt_algorithm algorithm = getAlgorithmCode(algorithm_str);
 
   // Declare options.
-  nlopt_opt opts;
-  opts = (nlopt_opt) malloc(sizeof *opts);
-  opts = nlopt_create(algorithm, (unsigned)num_controls); // algorithm and dimensionality
+  nlopt_opt opts = nlopt_create(algorithm, (unsigned)num_controls); // algorithm and dimensionality
 
   // Get other options.
   // Stop when f(x) <= stopval for minimizing or >= stopval for maximizing.
