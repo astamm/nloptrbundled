@@ -686,6 +686,7 @@ nlopt_opt getOptions(SEXP R_options, int num_controls, int *flag_encountered_err
 
   // Declare options.
   nlopt_opt opts;
+  opts = (nlopt_opt) malloc(sizeof *opts);
   opts = nlopt_create(algorithm, (unsigned)num_controls); // algorithm and dimensionality
 
   // Get other options.
