@@ -867,7 +867,8 @@ SEXP NLoptR_Optimize(SEXP args) {
   UNPROTECT(1);
 
   // Get local options.
-  SEXP R_local_options = PROTECT(getListElement(args, "local_options"));
+  SEXP R_local_options;
+  PROTECT(R_local_options = getListElement(args, "local_options"));
   if (R_local_options != R_NilValue) {
     // Parse list with options.
     nlopt_opt local_opts = getOptions(R_local_options, num_controls, &flag_encountered_error);
