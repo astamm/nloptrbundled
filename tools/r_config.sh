@@ -26,7 +26,7 @@ CFLAGS="$CPPFLAGS $CPICFLAGS $CFLAGS"
 echo set CFLAGS=$CFLAGS
 export CFLAGS
 
-CXX=`"${R_BIN}" CMD config CXX11`
+CXX=`"${R_BIN}" CMD config CXX`
 if test -z "${CXX}"; then
   echo ""
   echo "------------------ C++ COMPILER NOT FOUND -------------------"
@@ -42,11 +42,10 @@ fi
 echo set CXX=$CXX
 export CXX
 
-CXXSTD=`"${R_BIN}" CMD config CXX11STD`
-CXXFLAGS=`"${R_BIN}" CMD config CXX11FLAGS`
-CXXPICFLAGS=`"${R_BIN}" CMD config CXX11PICFLAGS`
+CXXFLAGS=`"${R_BIN}" CMD config CXXFLAGS`
+CXXPICFLAGS=`"${R_BIN}" CMD config CXXPICFLAGS`
 
-CXXFLAGS="$CXXSTD $CPPFLAGS $CXXPICFLAGS $CXXFLAGS"
+CXXFLAGS="$CPPFLAGS $CXXPICFLAGS $CXXFLAGS"
 echo set CXXFLAGS=$CXXFLAGS
 export CXXFLAGS
 
