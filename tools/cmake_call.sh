@@ -11,6 +11,13 @@ NCORES=`${RSCRIPT_BIN} -e "cat(min(2, parallel::detectCores(logical = FALSE), na
 dot() { file=$1; shift; . "$file"; }
 dot tools/r_config.sh ${R_BIN}
 
+# Suppress the vprintf fallback in nlopt_stop_log so that all NLopt log
+# output is routed exclusively through the per-opt vprintf callback
+# (installed as my_rvprintf in nloptr.c).  This eliminates the _vprintf
+# symbol from libnlopt.a and avoids the R CMD check NOTE.
+CFLAGS="-DNLOPT_SILENT ${CFLAGS}"
+export CFLAGS
+
 ${RSCRIPT_BIN} --vanilla -e 'getRversion() > "4.0.0"' | grep TRUE > /dev/null
 if [ $? -eq 0 ]; then
   AR=`"${R_BIN}" CMD config AR`
@@ -53,7 +60,6 @@ ${CMAKE_BIN} \
   -D NLOPT_PYTHON=OFF \
   -D NLOPT_SWIG=OFF \
   -D NLOPT_TESTS=OFF \
-  -D NLOPT_R_BINDIR=${R_BIN_FOLDER} \
   ${CMAKE_ADD_AR} ${CMAKE_ADD_RANLIB} ${CMAKE_ADD_OSX_SYSROOT} ../libs
 make -j${NCORES}
 make install

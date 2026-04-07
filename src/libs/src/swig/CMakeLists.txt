@@ -1,7 +1,3 @@
-
-if (POLICY CMP0078)
-  cmake_policy(SET CMP0078 NEW)
-endif ()
 # clean up old generated source files before running SWIG, useful for Java
 set(UseSWIG_MODULE_VERSION 2)
 include (UseSWIG)
@@ -21,18 +17,17 @@ endif ()
 include_directories (${NLOPT_PRIVATE_INCLUDE_DIRS})
 set_source_files_properties (nlopt.i PROPERTIES CPLUSPLUS ON)
 
-if (Python_NumPy_FOUND)
+if (Python_NumPy_FOUND AND NLOPT_CXX)
 
   set (SWIG_MODULE_nlopt_python_EXTRA_DEPS nlopt-python.i numpy.i generate-cpp)
 
-  # swig_add_module is deprecated
   swig_add_library (nlopt_python LANGUAGE python SOURCES nlopt.i
                     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/python
                     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
-  target_link_libraries (nlopt_python ${nlopt_lib})
-  target_link_libraries (nlopt_python Python::NumPy)
-  target_link_libraries (nlopt_python Python::Module)
+  target_link_libraries (nlopt_python PRIVATE ${nlopt_lib})
+  target_link_libraries (nlopt_python PRIVATE Python::NumPy)
+  target_link_libraries (nlopt_python PRIVATE Python::Module)
 
   set_target_properties (nlopt_python PROPERTIES OUTPUT_NAME nlopt)
   set_target_properties (nlopt_python PROPERTIES COMPILE_FLAGS "${SWIG_COMPILE_FLAGS}")
@@ -46,12 +41,11 @@ if (Python_NumPy_FOUND)
 endif ()
 
 
-if (GUILE_FOUND)
+if (GUILE_FOUND AND NLOPT_CXX)
 
   set (SWIG_MODULE_nlopt_guile_EXTRA_DEPS nlopt-guile.i generate-cpp)
   set (CMAKE_SWIG_FLAGS -scmstub)
 
-  # swig_add_module is deprecated
   swig_add_library (nlopt_guile LANGUAGE guile SOURCES nlopt.i
                     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/guile
                     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -60,8 +54,8 @@ if (GUILE_FOUND)
 
   target_include_directories (nlopt_guile PRIVATE ${GUILE_INCLUDE_DIRS})
 
-  target_link_libraries (nlopt_guile ${nlopt_lib})
-  target_link_libraries (nlopt_guile ${GUILE_LIBRARIES})
+  target_link_libraries (nlopt_guile PRIVATE ${nlopt_lib})
+  target_link_libraries (nlopt_guile PRIVATE ${GUILE_LIBRARIES})
   set_target_properties (nlopt_guile PROPERTIES COMPILE_FLAGS "${SWIG_COMPILE_FLAGS}")
 
   file (RELATIVE_PATH _REL_GUILE_SITE_PATH ${GUILE_ROOT_DIR} ${GUILE_SITE_DIR})
@@ -74,14 +68,13 @@ if (GUILE_FOUND)
 endif ()
 
 
-if (JNI_FOUND AND Java_FOUND AND SWIG_FOUND)
+if (JNI_FOUND AND Java_FOUND AND SWIG_FOUND AND NLOPT_CXX)
 
   include (UseJava)
 
   set (SWIG_MODULE_nlopt_java_EXTRA_DEPS nlopt-java.i generate-cpp)
   set (CMAKE_SWIG_FLAGS -package nlopt)
 
-  # swig_add_module is deprecated
   # OUTPUT_DIR is ${CMAKE_CURRENT_BINARY_DIR}/java/ + the -package above (with
   # any '.' replaced by '/'). It must also match the GLOB in glob_java.cmake.
   swig_add_library (nlopt_java LANGUAGE java SOURCES nlopt.i
@@ -90,8 +83,8 @@ if (JNI_FOUND AND Java_FOUND AND SWIG_FOUND)
 
   set (CMAKE_SWIG_FLAGS)
 
-  target_link_libraries (nlopt_java ${nlopt_lib})
-  target_link_libraries (nlopt_java JNI::JNI)
+  target_link_libraries (nlopt_java PRIVATE ${nlopt_lib})
+  target_link_libraries (nlopt_java PRIVATE JNI::JNI)
 
   set_target_properties (nlopt_java PROPERTIES OUTPUT_NAME nloptjni)
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")

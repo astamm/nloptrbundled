@@ -7,3 +7,6 @@
 inst/include/nloptr
 configure~
 inst/doc
+config.log
+config.status
+..Rcheck/00check.log

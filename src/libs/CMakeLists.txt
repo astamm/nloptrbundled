@@ -12,7 +12,7 @@
 # Benoit Scherrer, 2010 CRL, Harvard Medical School
 # Copyright (c) 2008-2009 Children's Hospital Boston
 #==============================================================================
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.18)
 
 set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
 
@@ -22,7 +22,7 @@ project (nlopt)
 # version
 set (NLOPT_MAJOR_VERSION "2")
 set (NLOPT_MINOR_VERSION "10")
-set (NLOPT_BUGFIX_VERSION "0")
+set (NLOPT_BUGFIX_VERSION "1")
 set (NLOPT_VERSION_STRING ${NLOPT_MAJOR_VERSION}.${NLOPT_MINOR_VERSION}.${NLOPT_BUGFIX_VERSION})
 message (STATUS "NLopt version ${NLOPT_VERSION_STRING}")
 
@@ -53,8 +53,6 @@ endif ()
 
 include (GNUInstallDirs)
 
-set (NLOPT_R_BINDIR "" CACHE STRING "Directory containing the R executable")
-
 # Offer the user the choice of overriding the installation directories
 set (NLOPT_INSTALL_LIBDIR     ${CMAKE_INSTALL_LIBDIR}        CACHE STRING "Installation directory for libraries")
 set (NLOPT_INSTALL_BINDIR     ${CMAKE_INSTALL_BINDIR}        CACHE STRING "Installation directory for executables")
@@ -66,24 +64,10 @@ set (NLOPT_INSTALL_CMAKEDIR   ${CMAKE_INSTALL_LIBDIR}/cmake/nlopt CACHE STRING "
 set (CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${NLOPT_INSTALL_LIBDIR} CACHE PATH "rpath")
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "use link path")
 
-if(POLICY CMP0042)
-  # Set MACOSX_RPATH to ON
-  cmake_policy(SET CMP0042 NEW)
-endif()
-
-if (POLICY CMP0086)
-  # UseSWIG honors SWIG_MODULE_NAME via -module flag
-  cmake_policy(SET CMP0086 NEW)
-endif ()
-
 include (CheckIncludeFiles)
 include (CheckFunctionExists)
 include (CheckTypeSize)
-include (CheckCCompilerFlag)
-include (CheckCXXSymbolExists)
 include (CheckCSourceCompiles)
-include (CheckCXXCompilerFlag)
-include (CheckLibraryExists)
 
 #==============================================================================
 # COMPILATION CHECKINGS and CONFIGURATION GENERATION
@@ -110,10 +94,9 @@ set (HAVE_UINT32_T ${SIZEOF_UINT32_T})
 check_type_size ("unsigned int" SIZEOF_UNSIGNED_INT)
 check_type_size ("unsigned long" SIZEOF_UNSIGNED_LONG)
 
-check_library_exists ("m" sqrt "" HAVE_LIBM)
-if (HAVE_LIBM)
-  set (M_LIBRARY m)
-  set (LIBS_PRIVATE "-l${M_LIBRARY}")
+find_library(M_LIBRARY m)
+if (M_LIBRARY)
+  set (LIBS_PRIVATE "-lm")
 endif()
 
 if (NOT DEFINED HAVE_FPCLASSIFY)
@@ -143,20 +126,6 @@ if (WITH_THREADLOCAL AND NOT DEFINED THREADLOCAL)
       set (THREADLOCAL ${_THREADLOCAL_KEY} CACHE STRING "Thread local keyword")
     endif ()
   endforeach()
-endif ()
-
-
-if (NLOPT_CXX OR NLOPT_PYTHON OR NLOPT_GUILE OR NLOPT_OCTAVE OR NLOPT_JAVA)
-  check_cxx_symbol_exists (__cplusplus ciso646 SYSTEM_HAS_CXX)
-  if (SYSTEM_HAS_CXX)
-    set (CMAKE_CXX_STANDARD 11) # set the standard to C++11 but do not require it
-
-    if (NLOPT_CXX)
-      set (CMAKE_CXX_STANDARD_REQUIRED ON) # if we build C++ API, we do need C++11
-    endif ()
-  else()
-    message (FATAL_ERROR "The compiler doesn't support CXX.")
-  endif ()
 endif ()
 
 #==============================================================================
@@ -261,15 +230,14 @@ if (NLOPT_LUKSAN)
   target_compile_definitions (${nlopt_lib} PRIVATE NLOPT_LUKSAN)
 endif ()
 
-if (NOT "${NLOPT_R_BINDIR}" STREQUAL "")
-  find_package(R REQUIRED)
-  target_include_directories(${nlopt_lib} PRIVATE ${R_INCLUDE_DIR})
-  target_compile_definitions(${nlopt_lib} PRIVATE NLOPT_R)
+if (M_LIBRARY)
+  target_link_libraries (${nlopt_lib} PRIVATE ${M_LIBRARY})
 endif ()
-
-target_link_libraries (${nlopt_lib} ${M_LIBRARY})
 set_target_properties (${nlopt_lib} PROPERTIES SOVERSION ${SO_MAJOR})
 set_target_properties (${nlopt_lib} PROPERTIES VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}")
+if (NLOPT_CXX)
+  target_compile_features (${nlopt_lib} PUBLIC cxx_lambdas)
+endif ()
 
 #==============================================================================
 # INCLUDE DIRECTORIES
@@ -333,16 +301,12 @@ if (UNIX)
 endif ()
 
 if (NLOPT_PYTHON)
-  if (CMAKE_VERSION VERSION_LESS 3.18)
-    find_package (Python 3.6 COMPONENTS Interpreter Development NumPy)
-  else ()
     option (NLOPT_PYTHON_SABI "Use Python stable ABI" OFF)
     if (NLOPT_PYTHON_SABI AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.26)
       find_package (Python 3.6 COMPONENTS Interpreter Development.SABIModule NumPy)
       add_library (Python::Module ALIAS Python::SABIModule)
     else ()
       find_package (Python 3.6 COMPONENTS Interpreter Development.Module NumPy)
-    endif ()
   endif ()
 endif ()
 
