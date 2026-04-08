@@ -193,6 +193,14 @@ if (CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREAT
   set_source_files_properties(src/algs/newuoa/newuoa.c PROPERTIES COMPILE_FLAGS -U_FORTIFY_SOURCE)
 endif ()
 
+# workaround for false-positive -Warray-bounds in slsqp's f2c-translated
+# Lawson-Hanson routine (Fortran 1-based pointer arithmetic a -= a_offset).
+# COMPILE_OPTIONS is used (not the deprecated COMPILE_FLAGS) so the flag is
+# appended after the target's -Wall, giving it precedence.
+if (CMAKE_C_COMPILER_ID MATCHES "GNU")
+  set_source_files_properties(src/algs/slsqp/slsqp.c PROPERTIES COMPILE_OPTIONS "-Wno-array-bounds")
+endif ()
+
 if (NLOPT_CXX)
   list (APPEND NLOPT_SOURCES
     src/algs/stogo/global.cc
