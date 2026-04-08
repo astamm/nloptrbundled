@@ -1,6 +1,6 @@
 /* DIRect-transp.f -- translated by f2c (version 20050501).
-   
-   f2c output hand-cleaned by SGJ (August 2007). 
+
+   f2c output hand-cleaned by SGJ (August 2007).
 */
 
 #include <math.h>
@@ -44,9 +44,9 @@
 /* |   Lipschitz continues. However, DIRECT has proven to be effective on  | */
 /* |   more complex problems than these.                                   | */
 /* +-----------------------------------------------------------------------+ */
-/* Subroutine */ void direct_direct_(fp fcn, doublereal *x, integer *n, doublereal *eps, doublereal epsabs, integer *maxf, integer *maxt, double starttime, double maxtime, int *force_stop, doublereal *minf, doublereal *l, 
-	doublereal *u, integer *algmethod, integer *ierror, FILE *logfile, 
-	doublereal *fglobal, doublereal *fglper, doublereal *volper, 
+/* Subroutine */ void direct_direct_(fp fcn, doublereal *x, integer *n, doublereal *eps, doublereal epsabs, integer *maxf, integer *maxt, double starttime, double maxtime, int *force_stop, doublereal *minf, doublereal *l,
+	doublereal *u, integer *algmethod, integer *ierror, FILE *logfile,
+	doublereal *fglobal, doublereal *fglper, doublereal *volper,
 	doublereal *sigmaper, void *fcn_data)
 {
     /* System generated locals */
@@ -61,7 +61,7 @@
 
     /* Local variables */
     integer increase;
-    doublereal *c__ = 0	/* was [90000][64] */, *f = 0	/* 
+    doublereal *c__ = 0	/* was [90000][64] */, *f = 0	/*
 	    was [90000][2] */;
     integer i__, j, *s = 0	/* was [3000][2] */, t;
     doublereal *w = 0;
@@ -87,8 +87,8 @@
 #define MY_ALLOC(p, t, n) p = (t *) malloc(sizeof(t) * (n)); \
                           if (!(p)) { *ierror = -100; goto cleanup; }
 
-    /* Note that I've transposed c__, length, and f relative to the 
-       original Fortran code.  e.g. length was length(maxfunc,n) 
+    /* Note that I've transposed c__, length, and f relative to the
+       original Fortran code.  e.g. length was length(maxfunc,n)
        in Fortran [ or actually length(maxfunc, maxdims), but by
        using malloc I can just allocate n ], corresponding to
        length[n][maxfunc] in C, but I've changed the code to access
@@ -106,7 +106,7 @@
 
     MY_ALLOC(anchor, integer, MAXDEEP + 2);
     MY_ALLOC(levels, doublereal, MAXDEEP + 1);
-    MY_ALLOC(thirds, doublereal, MAXDEEP + 1);    
+    MY_ALLOC(thirds, doublereal, MAXDEEP + 1);
     if (*maxt <= 0) *maxt = MAXDEEP;
 
     MY_ALLOC(w, doublereal, (*n));
@@ -318,10 +318,10 @@
 /* |                            Start of code.                             | */
 /* +-----------------------------------------------------------------------+ */
 /* +-----------------------------------------------------------------------+ */
-    /* Parameter adjustments */
-    --u;
-    --l;
-    --x;
+    /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance tracking */
+    { double * volatile _v = u; u = _v - 1; }
+    { double * volatile _v = l; l = _v - 1; }
+    { double * volatile _v = x; x = _v - 1; }
 
     /* Function Body */
     jones = *algmethod;
@@ -349,7 +349,7 @@
 /* +-----------------------------------------------------------------------+ */
 /* | Write the header of the logfile.                                      | */
 /* +-----------------------------------------------------------------------+ */
-    direct_dirheader_(logfile, &version, &x[1], n, eps, maxf, maxt, &l[1], &u[1], 
+    direct_dirheader_(logfile, &version, &x[1], n, eps, maxf, maxt, &l[1], &u[1],
 	    algmethod, &MAXFUNC, &MAXDEEP, fglobal, fglper, ierror, &epsfix, &
 		      iepschange, volper, sigmaper);
 /* +-----------------------------------------------------------------------+ */
@@ -401,7 +401,7 @@
 /* | Added variable to keep track of the maximum value found.              | */
 /* +-----------------------------------------------------------------------+ */
     direct_dirinit_(f, fcn, c__, length, &actdeep, point, anchor, &ifree,
-	    logfile, arrayi, &maxi, list2, w, &x[1], &l[1], &u[1], 
+	    logfile, arrayi, &maxi, list2, w, &x[1], &l[1], &u[1],
 	    minf, &minpos, thirds, levels, &MAXFUNC, &MAXDEEP, n, n, &
 	    fmax, &ifeasiblef, &iinfesiblef, ierror, fcn_data, jones,
 		    starttime, maxtime, force_stop);
@@ -437,7 +437,7 @@
 		      "and %d function evaluations.\n", tstart-1, numfunc);
     } else {
 	 if (logfile)
-	      fprintf(logfile, "%d, %d, %g, %g\n", 
+	      fprintf(logfile, "%d, %d, %g, %g\n",
 		      tstart-1, numfunc, *minf, fmax);
     }
 /* +-----------------------------------------------------------------------+ */
@@ -452,7 +452,7 @@
 /* | in the list S.                                                        | */
 /* +-----------------------------------------------------------------------+ */
 	actdeep = actmaxdeep;
-	direct_dirchoose_(anchor, s, &MAXDEEP, f, minf, *eps, epsabs, levels, &maxpos, length, 
+	direct_dirchoose_(anchor, s, &MAXDEEP, f, minf, *eps, epsabs, levels, &maxpos, length,
 		&MAXFUNC, &MAXDEEP, &MAXDIV, n, logfile, &cheat, &
 		kmax, &ifeasiblef, jones);
 /* +-----------------------------------------------------------------------+ */
@@ -489,7 +489,7 @@
 /* +-----------------------------------------------------------------------+ */
 /* | JG 09/24/00 Calculate the value delta used for sampling points.       | */
 /* +-----------------------------------------------------------------------+ */
-		actdeep_div__ = direct_dirgetmaxdeep_(&s[j - 1], length, &MAXFUNC, 
+		actdeep_div__ = direct_dirgetmaxdeep_(&s[j - 1], length, &MAXFUNC,
 			n);
 		delta = thirds[actdeep_div__ + 1];
 		actdeep = s[j + MAXDIV-1];
@@ -527,7 +527,7 @@
 /* | the actual evaluation of the function, again followed by checking for | */
 /* | errors.                                                               | */
 /* +-----------------------------------------------------------------------+ */
-		direct_dirsamplepoints_(c__, arrayi, &delta, &help, &start, length, 
+		direct_dirsamplepoints_(c__, arrayi, &delta, &help, &start, length,
 			logfile, f, &ifree, &maxi, point, &x[
 			1], &l[1], minf, &minpos, &u[1], n, &MAXFUNC, &
 			MAXDEEP, &oops);
@@ -544,7 +544,7 @@
 		direct_dirsamplef_(c__, arrayi, &delta, &help, &start, length,
 			    logfile, f, &ifree, &maxi, point, fcn, &x[
 			1], &l[1], minf, &minpos, &u[1], n, &MAXFUNC, &
-			MAXDEEP, &oops, &fmax, &ifeasiblef, &iinfesiblef, 
+			MAXDEEP, &oops, &fmax, &ifeasiblef, &iinfesiblef,
 				   fcn_data, force_stop);
 		if (force_stop && *force_stop) {
 		     *ierror = -102;
@@ -660,8 +660,8 @@
 /* | If no infeasible points exist (IInfesiblef = 0), skip this.           | */
 /* +-----------------------------------------------------------------------+ */
 	if (iinfesiblef > 0) {
-	     direct_dirreplaceinf_(&ifree, &ifreeold, f, c__, thirds, length, anchor, 
-		    point, &u[1], &l[1], &MAXFUNC, &MAXDEEP, n, n, 
+	     direct_dirreplaceinf_(&ifree, &ifreeold, f, c__, thirds, length, anchor,
+		    point, &u[1], &l[1], &MAXFUNC, &MAXDEEP, n, n,
 		    logfile, &fmax, jones);
 	}
 	ifreeold = ifree;
@@ -705,7 +705,7 @@
 	    } else {
 		increase = 1;
 		if (logfile)
-                     fprintf(logfile, 
+                     fprintf(logfile,
 "DIRECT could not find a feasible point after %d function evaluations.\n"
 "DIRECT continues until a feasible point is found.\n", numfunc);
 		*maxf = numfunc + oldmaxf;
@@ -743,7 +743,7 @@ L100:
 /* +-----------------------------------------------------------------------+ */
 /* | Give out a summary of the run.                                        | */
 /* +-----------------------------------------------------------------------+ */
-    direct_dirsummary_(logfile, &x[1], &l[1], &u[1], n, minf, fglobal, &numfunc, 
+    direct_dirsummary_(logfile, &x[1], &l[1], &u[1], n, minf, fglobal, &numfunc,
 	    ierror);
 /* +-----------------------------------------------------------------------+ */
 /* | Format statements.                                                    | */
