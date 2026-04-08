@@ -446,12 +446,28 @@ nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg,
     return NLOPT_OUT_OF_MEMORY;
   }
 
-  /* Parameter adjustments */
-  --iact;
-  --w;
-  --x;
-  --lb;
-  --ub;
+  /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
+   * tracking */
+  {
+    int *volatile _v = iact;
+    iact = _v - 1;
+  }
+  {
+    double *volatile _v = w;
+    w = _v - 1;
+  }
+  {
+    double *volatile _v = x;
+    x = _v - 1;
+  }
+  {
+    const double *volatile _v = lb;
+    lb = _v - 1;
+  }
+  {
+    const double *volatile _v = ub;
+    ub = _v - 1;
+  }
 
   /* Function Body */
   mpp = m + 2;
@@ -526,29 +542,72 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
   /* Further, SIMI holds the inverse of the matrix that is contained in the */
   /* first N columns of SIM. */
 
-  /* Parameter adjustments */
+  /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
+   * tracking */
   a_dim1 = *n;
   a_offset = 1 + a_dim1 * 1;
-  a -= a_offset;
+  {
+    double *volatile _v = a;
+    a = _v - a_offset;
+  }
   simi_dim1 = *n;
   simi_offset = 1 + simi_dim1 * 1;
-  simi -= simi_offset;
+  {
+    double *volatile _v = simi;
+    simi = _v - simi_offset;
+  }
   sim_dim1 = *n;
   sim_offset = 1 + sim_dim1 * 1;
-  sim -= sim_offset;
+  {
+    double *volatile _v = sim;
+    sim = _v - sim_offset;
+  }
   datmat_dim1 = *mpp;
   datmat_offset = 1 + datmat_dim1 * 1;
-  datmat -= datmat_offset;
-  --x;
-  --con;
-  --vsig;
-  --veta;
-  --sigbar;
-  --dx;
-  --w;
-  --iact;
-  --lb;
-  --ub;
+  {
+    double *volatile _v = datmat;
+    datmat = _v - datmat_offset;
+  }
+  {
+    double *volatile _v = x;
+    x = _v - 1;
+  }
+  {
+    double *volatile _v = con;
+    con = _v - 1;
+  }
+  {
+    double *volatile _v = vsig;
+    vsig = _v - 1;
+  }
+  {
+    double *volatile _v = veta;
+    veta = _v - 1;
+  }
+  {
+    double *volatile _v = sigbar;
+    sigbar = _v - 1;
+  }
+  {
+    double *volatile _v = dx;
+    dx = _v - 1;
+  }
+  {
+    double *volatile _v = w;
+    w = _v - 1;
+  }
+  {
+    int *volatile _v = iact;
+    iact = _v - 1;
+  }
+  {
+    const double *volatile _v = lb;
+    lb = _v - 1;
+  }
+  {
+    const double *volatile _v = ub;
+    ub = _v - 1;
+  }
 
   /* Function Body */
   iptem = MIN2(*n, 4);
@@ -1350,21 +1409,52 @@ static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
   /* vector SDIRN gives a search direction that reduces all the active */
   /* constraint violations by one simultaneously. */
 
-  /* Parameter adjustments */
+  /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
+   * tracking */
   z_dim1 = *n;
   z_offset = 1 + z_dim1 * 1;
-  z__ -= z_offset;
+  {
+    double *volatile _v = z__;
+    z__ = _v - z_offset;
+  }
   a_dim1 = *n;
   a_offset = 1 + a_dim1 * 1;
-  a -= a_offset;
-  --b;
-  --dx;
-  --iact;
-  --zdota;
-  --vmultc;
-  --sdirn;
-  --dxnew;
-  --vmultd;
+  {
+    double *volatile _v = a;
+    a = _v - a_offset;
+  }
+  {
+    double *volatile _v = b;
+    b = _v - 1;
+  }
+  {
+    double *volatile _v = dx;
+    dx = _v - 1;
+  }
+  {
+    int *volatile _v = iact;
+    iact = _v - 1;
+  }
+  {
+    double *volatile _v = zdota;
+    zdota = _v - 1;
+  }
+  {
+    double *volatile _v = vmultc;
+    vmultc = _v - 1;
+  }
+  {
+    double *volatile _v = sdirn;
+    sdirn = _v - 1;
+  }
+  {
+    double *volatile _v = dxnew;
+    dxnew = _v - 1;
+  }
+  {
+    double *volatile _v = vmultd;
+    vmultd = _v - 1;
+  }
 
   /* Function Body */
   *ifull = 1;
