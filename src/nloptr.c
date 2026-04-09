@@ -177,10 +177,9 @@ static int rvprintf(void *data, const char *format, va_list ap) {
   RvprintfPayload payload;
   payload.format = format;
   va_copy(payload.ap, ap);
-  /* volatile so cont survives longjmp with a defined value. */
-  volatile SEXP cont = R_MakeUnwindCont();
-  payload.cont = (SEXP)cont;
-  PROTECT(payload.cont);
+  /* volatile so cont retains its value after the longjmp in the else branch;
+     PROTECTed immediately so rchk can track the fresh pointer. */
+  volatile SEXP cont = PROTECT(R_MakeUnwindCont());
   if (setjmp(payload.jmpbuf) == 0) {
     R_UnwindProtect(do_rvprintf_call, &payload, do_rvprintf_cleanup, &payload,
                     (SEXP)cont);
@@ -1200,7 +1199,9 @@ SEXP NLoptR_Optimize(SEXP args) {
   SET_VECTOR_ELT(R_result_list, 6, R_version_minor);
   SET_VECTOR_ELT(R_result_list, 7, R_version_bugfix);
 
-  UNPROTECT(num_return_elements + 2);
+  UNPROTECT(10); /* R_result_list, names, R_status, R_status_message,
+                    R_num_iterations, R_objective, R_solution,
+                    R_version_major, R_version_minor, R_version_bugfix */
 
   return (R_result_list);
 }
