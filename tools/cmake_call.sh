@@ -13,8 +13,8 @@ dot tools/r_config.sh ${R_BIN}
 
 # Suppress the vprintf fallback in nlopt_stop_log so that all NLopt log
 # output is routed exclusively through the per-opt vprintf callback
-# (installed as my_rvprintf in nloptr.c).  This eliminates the _vprintf
-# symbol from libnlopt.a and avoids the R CMD check NOTE.
+# (installed as rvprintf in nloptr.c).  This eliminates the _vprintf
+# symbol from libnlopt.a and avoids the R CMD check WARNING.
 CFLAGS="-DNLOPT_SILENT ${CFLAGS}"
 export CFLAGS
 

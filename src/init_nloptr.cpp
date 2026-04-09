@@ -70,7 +70,7 @@ static void do_rfatal_cleanup(void *data, Rboolean jump) {
     throw std::runtime_error(static_cast<RFatalPayload *>(data)->message);
 }
 
-static void my_rfatal(void *data, const char *message) {
+static void rfatal(void *data, const char *message) {
   (void)data;
   RFatalPayload payload = {message};
   SEXP cont = R_MakeUnwindCont();
@@ -212,7 +212,7 @@ extern "C" void R_init_nloptrbundled(DllInfo *info) {
 
   // Install R-friendly callbacks: fatal errors via Rf_error, log output via
   // Rprintf.
-  nlopt_set_error_callback(my_rfatal, NULL);
+  nlopt_set_error_callback(rfatal, NULL);
 
   // Register routines to improve lookup from R using .Call interface.
   R_registerRoutines(info, NULL, CallEntries, NULL, NULL);

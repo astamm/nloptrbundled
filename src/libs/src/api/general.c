@@ -327,7 +327,7 @@ void nlopt_fatal(const char *message) {
   /* Reach here only if the callback returned (which it must not do).
      Use __builtin_trap() instead of abort() to satisfy the noreturn
      contract without introducing a reference to the _abort symbol,
-     which triggers an R CMD check NOTE. */
+     which triggers an R CMD check WARNING. */
   __builtin_trap();
 }
 

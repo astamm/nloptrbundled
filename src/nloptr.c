@@ -172,7 +172,7 @@ static void do_rvprintf_cleanup(void *data, Rboolean jump) {
 /* Logging callback: routes NLopt diagnostic messages through Rvprintf so
    that output appears on the R console instead of stdout.  Installed on
    every nlopt_opt object immediately after creation. */
-static int my_rvprintf(void *data, const char *format, va_list ap) {
+static int rvprintf(void *data, const char *format, va_list ap) {
   (void)data;
   RvprintfPayload payload;
   payload.format = format;
@@ -759,7 +759,7 @@ nlopt_opt getOptions(SEXP R_options, int num_controls,
       nlopt_create(algorithm, num_controls); // algorithm and dimensionality
 
   // Route NLopt log output to the R console.
-  nlopt_set_vprintf_callback(opts, my_rvprintf, NULL);
+  nlopt_set_vprintf_callback(opts, rvprintf, NULL);
 
   // Get other options.
   // Stop when f(x) <= stopval for minimizing or >= stopval for maximizing.
