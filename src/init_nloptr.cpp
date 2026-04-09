@@ -39,19 +39,54 @@
 
 #include "nloptr.h"
 #include <nlopt.h>
+#include <stdexcept>
 
 static const R_CallMethodDef CallEntries[] = {
     {"NLoptR_Optimize", (DL_FUNC)&NLoptR_Optimize, 1}, {NULL, NULL, 0}};
 
 /* Fatal-error callback: translates NLopt's abort() into Rf_error() so that
    unrecoverable NLopt errors are reported through R's condition system
-   rather than crashing the R session. */
-static void my_rfatal(void *data, const char *message) {
-  (void)data;
-  Rf_error("NLopt fatal error: %s", message);
+   rather than crashing the R session.
+
+   Rf_error() longjmps, which is unsafe when called from a C callback frame
+   (e.g. on Rgui.exe, Rprintf checks for interrupts and may longjmp out of the
+   calling frame on interrupt). We therefore wrap the call in R_UnwindProtect:
+   the cleanup hook catches R's longjmp and re-throws it as a C++ exception so
+   the C++ stack can unwind cleanly, then R_ContinueUnwind() re-triggers the
+   original R error from safe ground. */
+
+struct RFatalPayload {
+  const char *message;
+};
+
+static SEXP do_rfatal_call(void *data) {
+  RFatalPayload *d = static_cast<RFatalPayload *>(data);
+  Rf_error("NLopt fatal error: %s", d->message);
+  return R_NilValue; /* unreachable; silences -Wreturn-type */
 }
 
-void R_init_nloptrbundled(DllInfo *info) {
+static void do_rfatal_cleanup(void *data, Rboolean jump) {
+  if (jump)
+    throw std::runtime_error(static_cast<RFatalPayload *>(data)->message);
+}
+
+static void my_rfatal(void *data, const char *message) {
+  (void)data;
+  RFatalPayload payload = {message};
+  SEXP cont = R_MakeUnwindCont();
+  PROTECT(cont);
+  try {
+    R_UnwindProtect(do_rfatal_call, &payload, do_rfatal_cleanup, &payload,
+                    cont);
+    UNPROTECT(1); /* reached only if do_rfatal_call returns — it never does */
+  } catch (std::runtime_error const &) {
+    /* C++ stack cleanly unwound; hand control back to R's error machinery. */
+    UNPROTECT(1);
+    R_ContinueUnwind(cont); /* longjmps — does not return */
+  }
+}
+
+extern "C" void R_init_nloptrbundled(DllInfo *info) {
   // Register C functions that can be used by external packages
   // linking to internal NLopt code from C.
   R_RegisterCCallable("nloptrbundled", "nlopt_algorithm_name",

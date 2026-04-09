@@ -46,6 +46,7 @@
 
 #include "nloptr.h"
 #include <nlopt.h>
+#include <setjmp.h>
 #include <stdbool.h>
 
 #define AS_INTEGER(x) Rf_coerceVector(x, INTSXP)
@@ -142,12 +143,57 @@ int getVal(char *key) {
   return pair ? pair->value : -1;
 }
 
-/* Logging callback: routes NLopt diagnostic messages through Rprintf so
+/* ---------- safe Rvprintf via R_UnwindProtect + setjmp/longjmp -----------
+   Rvprintf (like Rprintf) can longjmp on interrupt (e.g. on Rgui.exe),
+   which would skip any cleanup code in the calling frame.  We therefore
+   wrap the call in R_UnwindProtect: the cleanup hook fires when R decides
+   to longjmp, redirects the jump back to our setjmp so the calling frame is
+   restored cleanly, then R_ContinueUnwind() re-triggers the original R
+   condition from safe ground.                                              */
+
+typedef struct {
+  const char *format;
+  va_list ap;
+  jmp_buf jmpbuf;
+  SEXP cont;
+} RvprintfPayload;
+
+static SEXP do_rvprintf_call(void *data) {
+  RvprintfPayload *d = (RvprintfPayload *)data;
+  Rvprintf(d->format, d->ap);
+  return R_NilValue;
+}
+
+static void do_rvprintf_cleanup(void *data, Rboolean jump) {
+  if (jump)
+    longjmp(((RvprintfPayload *)data)->jmpbuf, 1);
+}
+
+/* Logging callback: routes NLopt diagnostic messages through Rvprintf so
    that output appears on the R console instead of stdout.  Installed on
    every nlopt_opt object immediately after creation. */
 static int my_rvprintf(void *data, const char *format, va_list ap) {
   (void)data;
-  Rvprintf(format, ap);
+  RvprintfPayload payload;
+  payload.format = format;
+  va_copy(payload.ap, ap);
+  /* volatile so cont survives longjmp with a defined value. */
+  volatile SEXP cont = R_MakeUnwindCont();
+  payload.cont = (SEXP)cont;
+  PROTECT(payload.cont);
+  if (setjmp(payload.jmpbuf) == 0) {
+    R_UnwindProtect(do_rvprintf_call, &payload, do_rvprintf_cleanup, &payload,
+                    (SEXP)cont);
+    /* Normal return: Rvprintf completed without longjmp. */
+    UNPROTECT(1);
+    va_end(payload.ap);
+  } else {
+    /* Caught R's longjmp via cleanup hook — re-trigger from clean ground.
+       va_end is intentionally omitted: we are about to re-enter R's error
+       machinery and the stack will be discarded in any case. */
+    UNPROTECT(1);
+    R_ContinueUnwind((SEXP)cont); /* longjmps — does not return */
+  }
   return 0;
 }
 
