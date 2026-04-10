@@ -34,15 +34,15 @@ static int pow_ii(int x, int n) /* compute x^n, n >= 0 */
      return p;
 }
 
-static void minfit_(int m, int n, double machep,
+static void minfit_(int m, int n, double machep, 
 	     double *tol, double *ab, double *q, double *ework);
 static nlopt_result min_(int n, int j, int nits, double *d2, double *x1, double *f1, int fk, praxis_func f, void *f_data, double *x, double *t_old, double machep, double *h__, struct global_s *global_1, struct q_s *q_1);
 static double flin_(int n, int j, double *l, praxis_func f, void *f_data, double *x, int *nf, struct q_s *q_1, nlopt_result *ret);
 static void sort_(int m, int n, double *d__, double *v);
-static void quad_(int n, praxis_func f, void *f_data, double *x,
+static void quad_(int n, praxis_func f, void *f_data, double *x, 
 		  double *t_old, double machep, double *h__, struct global_s *global_1, struct q_s *q_1);
 
-nlopt_result praxis_(double t0, double machep, double h0,
+nlopt_result praxis_(double t0, double machep, double h0, 
 		     int n, double *x, praxis_func f, void *f_data,
 		     nlopt_stopping *stop, double *minf)
 {
@@ -231,7 +231,7 @@ L40:
 /* .....MINIMIZE ALONG THE FIRST DIRECTION V(*,1). */
 /*     FX MUST BE PASSED TO MIN BY VALUE. */
     value = global_1.fx;
-    ret = min_(n, 1, 2, d__, &s, &value, 0, f,f_data, &x[1],
+    ret = min_(n, 1, 2, d__, &s, &value, 0, f,f_data, &x[1], 
 	    &t_old, machep, &h__, &global_1, &q_1);
     if (ret != NLOPT_SUCCESS) goto done;
     if (s > 0.) {
@@ -278,7 +278,7 @@ L80:
 	}
 	i__2 = n;
 	for (i__ = 1; i__ <= i__2; ++i__) {
-	     s = (global_1.ldt * .1 + t2_old * pow_ii(10, kt))
+	     s = (global_1.ldt * .1 + t2_old * pow_ii(10, kt)) 
 		  * nlopt_urand(-.5,.5);
 	     /* was: (random_(n) - .5); */
 	    z__[i__ - 1] = s;
@@ -615,7 +615,7 @@ done:
     return ret;
 } /* praxis_ */
 
-static void minfit_(int m, int n, double machep,
+static void minfit_(int m, int n, double machep, 
 	double *tol, double *ab, double *q, double *ework)
 {
     /* System generated locals */
@@ -629,7 +629,7 @@ static void minfit_(int m, int n, double machep,
     double s, x, y, z__;
     int l2, ii, kk, kt, ll2, lp1;
     double eps, temp;
-
+    
     e = ework;
 
 /* ...AN IMPROVED VERSION OF MINFIT (SEE GOLUB AND REINSCH, 1969) */
@@ -1055,7 +1055,7 @@ static nlopt_result min_(int n, int j, int nits, double *
     if (dz) {
 	temp = global_1->dmin__;
     }
-    t2 = m4 * sqrt(fabs(global_1->fx) / temp + s * global_1->ldt) + m2 *
+    t2 = m4 * sqrt(fabs(global_1->fx) / temp + s * global_1->ldt) + m2 * 
 	    global_1->ldt;
     s = m4 * s + *t_old;
     if (dz && t2 > s) {
@@ -1231,7 +1231,7 @@ L2:
     i__1 = n;
     for (i__ = 1; i__ <= i__1; ++i__) {
 /* L3: */
-	t[i__ - 1] = q_1->qa * q_1->q0[i__ - 1] + q_1->qb * x[i__] + q_1->qc *
+	t[i__ - 1] = q_1->qa * q_1->q0[i__ - 1] + q_1->qb * x[i__] + q_1->qc * 
 		q_1->q1[i__ - 1];
     }
 /* ...THE FUNCTION EVALUATION COUNTER NF IS INCREMENTED... */
@@ -1306,7 +1306,7 @@ L3:
     }
 } /* sort_ */
 
-static void quad_(int n, praxis_func f, void *f_data, double *x, double *t_old,
+static void quad_(int n, praxis_func f, void *f_data, double *x, double *t_old, 
 		  double machep, double *h__, struct global_s *global_1, struct q_s *q_1)
 {
     /* System generated locals */
@@ -1345,7 +1345,7 @@ static void quad_(int n, praxis_func f, void *f_data, double *x, double *t_old,
 	goto L2;
     }
     value = q_1->qf1;
-    min_(n, 0, 2, &s, &l, &value, 1, f,f_data, &x[1], t_old, machep,
+    min_(n, 0, 2, &s, &l, &value, 1, f,f_data, &x[1], t_old, machep, 
 	    h__, global_1, q_1);
     q_1->qa = l * (l - q_1->qd1) / (q_1->qd0 * (q_1->qd0 + q_1->qd1));
     q_1->qb = (l + q_1->qd0) * (q_1->qd1 - l) / (q_1->qd0 * q_1->qd1);

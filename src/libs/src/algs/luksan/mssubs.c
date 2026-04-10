@@ -88,8 +88,8 @@ void luksan_mxvine__(int *n, int *ix)
 /*  RI  Y(N)  INPUT VECTOR. */
 /*  RI  V(M)  INPUT VECTOR. */
 
-void luksan_mxdcmv__(int *n, int *m, double *a,
-	double *alf, double *x, double *u, double *bet,
+void luksan_mxdcmv__(int *n, int *m, double *a, 
+	double *alf, double *x, double *u, double *bet, 
 	double *y, double *v)
 {
     /* System generated locals */
@@ -173,7 +173,7 @@ void luksan_mxvsav__(int *n, double *x, double *y)
 /*  RI  Y(N)  INPUT VECTOR. */
 /*  RO  Z(N)  OUTPUT VECTOR WHERE Z:= A*X + B*Y. */
 
-void luksan_mxvlin__(int *n, double *a, double *x,
+void luksan_mxvlin__(int *n, double *a, double *x, 
 	double *b, double *y, double *z__)
 {
     /* System generated locals */
@@ -211,7 +211,7 @@ void luksan_mxvlin__(int *n, double *a, double *x,
 /*  RI  X(N)  INPUT VECTOR. */
 /*  RI  Y(M)  INPUT VECTOR. */
 
-void luksan_mxdcmu__(int *n, int *m, double *a,
+void luksan_mxdcmu__(int *n, int *m, double *a, 
 	double *alf, double *x, double *y)
 {
     /* System generated locals */
@@ -254,7 +254,7 @@ void luksan_mxdcmu__(int *n, int *m, double *a,
 /*  RI  Y(N)  INPUT VECTOR. */
 /*  RO  Z(N)  OUTPUT VECTOR WHERE Z:= Y + A*X. */
 
-void luksan_mxvdir__(int *n, double *a, double *x,
+void luksan_mxvdir__(int *n, double *a, double *x, 
 		    double *y, double *z__)
 {
     /* System generated locals */
@@ -296,7 +296,7 @@ void luksan_mxvdir__(int *n, double *a, double *x,
 *  S   MXVDIR  VECTOR AUGMENTED BY THE SCALED VECTOR.
 *  S   MXVSCL  SCALING OF A VECTOR.
 */
-void luksan_mxdcmd__(int *n, int *m, double *a,
+void luksan_mxdcmd__(int *n, int *m, double *a, 
 	double *x, double *alf, double *y, double *z__)
 {
     /* System generated locals */
@@ -350,7 +350,7 @@ void luksan_mxdcmd__(int *n, int *m, double *a,
 * H.MATTHIES, G.STRANG: THE SOLUTION OF NONLINEAR FINITE ELEMENT
 * EQUATIONS. INT.J.NUMER. METHODS ENGN. 14 (1979) 1613-1626.
 */
-void luksan_mxdrcb__(int *n, int *m, double *a,
+void luksan_mxdrcb__(int *n, int *m, double *a, 
 	double *b, double *u, double *v, double *x, int *
 	ix, int *job)
 {
@@ -409,7 +409,7 @@ void luksan_mxdrcb__(int *n, int *m, double *a,
 * H.MATTHIES, G.STRANG: THE SOLUTION OF NONLINEAR FINITE ELEMENT
 * EQUATIONS. INT.J.NUMER. METHODS ENGN. 14 (1979) 1613-1626.
 */
-void luksan_mxdrcf__(int *n, int *m, double *a,
+void luksan_mxdrcf__(int *n, int *m, double *a, 
 	double *b, double *u, double *v, double *x, int *
 	ix, int *job)
 {
@@ -454,7 +454,7 @@ void luksan_mxdrcf__(int *n, int *m, double *a,
 *  RI  X(N)  INPUT VECTOR.
 *  RO  Y(M)  OUTPUT VECTOR EQUAL TO A*X.
 */
-void luksan_mxdrmm__(int *n, int *m, double *a,
+void luksan_mxdrmm__(int *n, int *m, double *a, 
 	double *x, double *y)
 {
     /* System generated locals */
@@ -500,7 +500,7 @@ void luksan_mxdrmm__(int *n, int *m, double *a,
 *  RU  B(N*M)  RECTANGULAR MATRIX STORED AS A ONE-DIMENSIONAL ARRAY.
 *  RU  U(M)  VECTOR.
 */
-void luksan_mxdrsu__(int *n, int *m, double *a,
+void luksan_mxdrsu__(int *n, int *m, double *a, 
 		     double *b, double *u)
 {
     int i__, k, l;
@@ -804,7 +804,7 @@ void luksan_mxuneg__(int *n, double *x, double *y,
 *         IX(I).LE.-1. IF JOB.LT.0 THEN INDEX I IS NOT USED WHENEVER
 *         IX(I).EQ.-5.
 */
-void luksan_mxuzer__(int *n, double *x, int *ix,
+void luksan_mxuzer__(int *n, double *x, int *ix, 
 		     int *job)
 {
     /* System generated locals */

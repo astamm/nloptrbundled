@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 1992, Michael J. D. Powell (M.J.D.Powell@damtp.cam.ac.uk)
  * Copyright (c) 2004, Jean-Sebastien Roy (js@jeannot.org)
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -11,10 +11,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,7 +27,7 @@
 /*
  * This software is a C version of COBYLA2, a contrained optimization by linear
  * approximation package developed by Michael J. D. Powell in Fortran.
- *
+ * 
  * The original source code can be found at :
  * http://plato.la.asu.edu/topics/problems/nlores.html
  *
@@ -37,9 +37,10 @@
  *
  */
 
-#include <math.h>
-#include <stdio.h>
+
 #include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 
 #include "cobyla.h"
 
@@ -56,78 +57,73 @@
    problem */
 #define ENFORCE_BOUNDS 1
 
-#define MIN2(a, b) ((a) <= (b) ? (a) : (b))
-#define MAX2(a, b) ((a) >= (b) ? (a) : (b))
+#define MIN2(a,b) ((a) <= (b) ? (a) : (b))
+#define MAX2(a,b) ((a) >= (b) ? (a) : (b))
 
-#define U(n) ((unsigned)(n))
+#define U(n) ((unsigned) (n))
 
 /**************************************************************************/
 /* SGJ, 2008: NLopt-style interface function: */
 
 typedef struct {
-  nlopt_func f;
-  void *f_data;
-  unsigned m_orig;
-  nlopt_constraint *fc;
-  unsigned p;
-  nlopt_constraint *h;
-  double *xtmp;
-  double *lb, *ub;
-  double *con_tol, *scale;
-  nlopt_stopping *stop;
+     nlopt_func f;
+     void *f_data;
+     unsigned m_orig;
+     nlopt_constraint *fc;
+     unsigned p;
+     nlopt_constraint *h;
+     double *xtmp;
+     double *lb, *ub;
+     double *con_tol, *scale;
+     nlopt_stopping *stop;
 } func_wrap_state;
 
 static int func_wrap(int ni, int mi, double *x, double *f, double *con,
-                     func_wrap_state *s) {
-  unsigned n = U(ni);
-  unsigned i, j, k;
-  double *xtmp = s->xtmp;
-  const double *lb = s->lb, *ub = s->ub;
+		     func_wrap_state *s)
+{
+     unsigned n = U(ni);
+     unsigned i, j, k;
+     double *xtmp = s->xtmp;
+     const double *lb = s->lb, *ub = s->ub;
 
-  (void)mi; /* unused */
+     (void) mi; /* unused */
 
-  /* in nlopt, we guarante that the function is never evaluated outside
-     the lb and ub bounds, so we need force this with xtmp ... note
-     that this leads to discontinuity in the first derivative, which
-     slows convergence if we don't enable the ENFORCE_BOUNDS feature
-     above. */
-  for (j = 0; j < n; ++j) {
-    if (x[j] < lb[j])
-      xtmp[j] = lb[j];
-    else if (x[j] > ub[j])
-      xtmp[j] = ub[j];
-    else
-      xtmp[j] = x[j];
-  }
-  nlopt_unscale(n, s->scale, xtmp, xtmp);
+     /* in nlopt, we guarante that the function is never evaluated outside
+	the lb and ub bounds, so we need force this with xtmp ... note
+	that this leads to discontinuity in the first derivative, which
+        slows convergence if we don't enable the ENFORCE_BOUNDS feature
+	above. */
+     for (j = 0; j < n; ++j) {
+	  if (x[j] < lb[j]) xtmp[j] = lb[j];
+	  else if (x[j] > ub[j]) xtmp[j] = ub[j];
+	  else xtmp[j] = x[j];
+     }
+     nlopt_unscale(n, s->scale, xtmp, xtmp);
 
-  *f = s->f(n, xtmp, NULL, s->f_data);
-  if (nlopt_stop_forced(s->stop))
-    return 1;
-  i = 0;
-  for (j = 0; j < s->m_orig; ++j) {
-    nlopt_eval_constraint(con + i, NULL, s->fc + j, n, xtmp);
-    if (nlopt_stop_forced(s->stop))
-      return 1;
-    for (k = 0; k < s->fc[j].m; ++k)
-      con[i + k] = -con[i + k];
-    i += s->fc[j].m;
-  }
-  for (j = 0; j < s->p; ++j) {
-    nlopt_eval_constraint(con + i, NULL, s->h + j, n, xtmp);
-    if (nlopt_stop_forced(s->stop))
-      return 1;
-    for (k = 0; k < s->h[j].m; ++k)
-      con[(i + s->h[j].m) + k] = -con[i + k];
-    i += 2 * s->h[j].m;
-  }
-  for (j = 0; j < n; ++j) {
-    if (!nlopt_isinf(lb[j]))
-      con[i++] = x[j] - lb[j];
-    if (!nlopt_isinf(ub[j]))
-      con[i++] = ub[j] - x[j];
-  }
-  return 0;
+     *f = s->f(n, xtmp, NULL, s->f_data);
+     if (nlopt_stop_forced(s->stop)) return 1;
+     i = 0;
+     for (j = 0; j < s->m_orig; ++j) {
+	  nlopt_eval_constraint(con + i, NULL, s->fc+j, n, xtmp);
+	  if (nlopt_stop_forced(s->stop)) return 1;
+	  for (k = 0; k < s->fc[j].m; ++k)
+	       con[i + k] = -con[i + k];
+	  i += s->fc[j].m;
+     }
+     for (j = 0; j < s->p; ++j) {
+	  nlopt_eval_constraint(con + i, NULL, s->h+j, n, xtmp);
+	  if (nlopt_stop_forced(s->stop)) return 1;
+	  for (k = 0; k < s->h[j].m; ++k)
+	       con[(i + s->h[j].m) + k] = -con[i + k];
+	  i += 2 * s->h[j].m;
+     }
+     for (j = 0; j < n; ++j) {
+	  if (!nlopt_isinf(lb[j]))
+	       con[i++] = x[j] - lb[j];
+	  if (!nlopt_isinf(ub[j]))
+	       con[i++] = ub[j] - x[j];
+     }
+     return 0;
 }
 
 /*
@@ -137,7 +133,7 @@ typedef enum {
   COBYLA_MSG_NONE = 0, /* No messages */
   COBYLA_MSG_EXIT = 1, /* Exit reasons */
   COBYLA_MSG_ITER = 2, /* Rho and Sigma changes */
-  COBYLA_MSG_INFO = 3  /* Informational messages */
+  COBYLA_MSG_INFO = 3 /* Informational messages */
 } cobyla_message;
 
 /*
@@ -159,7 +155,7 @@ typedef enum {
  *
  */
 typedef int cobyla_function(int n, int m, double *x, double *f, double *con,
-                            func_wrap_state *state);
+  func_wrap_state *state);
 
 /*
  * cobyla : minimize a function subject to constraints
@@ -178,126 +174,101 @@ typedef int cobyla_function(int n, int m, double *x, double *f, double *con,
  * The cobyla function returns the usual nlopt_result codes.
  *
  */
-extern nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg,
-                           double rhoend, nlopt_stopping *stop,
-                           const double *lb, const double *ub, int message,
-                           cobyla_function *calcfc, func_wrap_state *state);
+extern nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double rhoend, nlopt_stopping *stop, const double *lb, const double *ub,
+  int message, cobyla_function *calcfc, func_wrap_state *state);
 
-nlopt_result cobyla_minimize(unsigned n, nlopt_func f, void *f_data, unsigned m,
-                             nlopt_constraint *fc, unsigned p,
-                             nlopt_constraint *h, const double *lb,
-                             const double *ub, /* bounds */
-                             double *x, /* in: initial guess, out: minimizer */
-                             double *minf, nlopt_stopping *stop,
-                             const double *dx) {
-  unsigned i, j;
-  func_wrap_state s;
-  nlopt_result ret;
-  double rhobeg, rhoend;
+nlopt_result cobyla_minimize(unsigned n, nlopt_func f, void *f_data,
+			     unsigned m, nlopt_constraint *fc,
+                             unsigned p, nlopt_constraint *h,
+			     const double *lb, const double *ub, /* bounds */
+			     double *x, /* in: initial guess, out: minimizer */
+			     double *minf,
+			     nlopt_stopping *stop,
+			     const double *dx)
+{
+     unsigned i, j;
+     func_wrap_state s;
+     nlopt_result ret;
+     double rhobeg, rhoend;
 
-  s.f = f;
-  s.f_data = f_data;
-  s.m_orig = m;
-  s.fc = fc;
-  s.p = p;
-  s.h = h;
-  s.stop = stop;
-  s.lb = s.ub = s.xtmp = s.con_tol = s.scale = NULL;
+     s.f = f; s.f_data = f_data;
+     s.m_orig = m;
+     s.fc = fc; 
+     s.p = p;
+     s.h = h;
+     s.stop = stop;
+     s.lb = s.ub = s.xtmp = s.con_tol = s.scale = NULL;
 
-  s.scale = nlopt_compute_rescaling(n, dx);
-  if (!s.scale) {
-    ret = NLOPT_OUT_OF_MEMORY;
-    goto done;
-  }
-  for (j = 0; j < n; ++j)
-    if (s.scale[j] == 0 || !nlopt_isfinite(s.scale[j])) {
-      nlopt_stop_msg(
-          stop, "invalid scaling %g of dimension %d: possible over/underflow?",
-          s.scale[j], j);
-      ret = NLOPT_INVALID_ARGS;
-      goto done;
-    }
+     s.scale = nlopt_compute_rescaling(n, dx);
+     if (!s.scale) { ret = NLOPT_OUT_OF_MEMORY; goto done; }
+     for (j = 0; j < n; ++j)
+         if (s.scale[j] == 0 || !nlopt_isfinite(s.scale[j])) {
+             nlopt_stop_msg(stop, "invalid scaling %g of dimension %d: possible over/underflow?", s.scale[j], j);
+             ret = NLOPT_INVALID_ARGS; goto done;
+         }
 
-  s.lb = nlopt_new_rescaled(n, s.scale, lb);
-  if (!s.lb) {
-    ret = NLOPT_OUT_OF_MEMORY;
-    goto done;
-  }
-  s.ub = nlopt_new_rescaled(n, s.scale, ub);
-  if (!s.ub) {
-    ret = NLOPT_OUT_OF_MEMORY;
-    goto done;
-  }
-  nlopt_reorder_bounds(n, s.lb, s.ub);
+     s.lb = nlopt_new_rescaled(n, s.scale, lb);
+     if (!s.lb) { ret = NLOPT_OUT_OF_MEMORY; goto done; }
+     s.ub = nlopt_new_rescaled(n, s.scale, ub);
+     if (!s.ub) { ret = NLOPT_OUT_OF_MEMORY; goto done; }
+     nlopt_reorder_bounds(n, s.lb, s.ub);
 
-  s.xtmp = (double *)malloc(sizeof(double) * n);
-  if (!s.xtmp) {
-    ret = NLOPT_OUT_OF_MEMORY;
-    goto done;
-  }
+     s.xtmp = (double *) malloc(sizeof(double) * n);
+     if (!s.xtmp) { ret = NLOPT_OUT_OF_MEMORY; goto done; }
 
-  /* SGJ, 2008: compute rhoend from NLopt stop info */
-  rhobeg = fabs(dx[0] / s.scale[0]);
-  rhoend = stop->xtol_rel * (rhobeg);
-  if (stop->xtol_abs)
-    for (j = 0; j < n; ++j)
-      if (rhoend < stop->xtol_abs[j] / fabs(s.scale[j]))
-        rhoend = stop->xtol_abs[j] / fabs(s.scale[j]);
+     /* SGJ, 2008: compute rhoend from NLopt stop info */
+     rhobeg = fabs(dx[0] / s.scale[0]);
+     rhoend = stop->xtol_rel * (rhobeg);
+     if (stop->xtol_abs)
+      for (j = 0; j < n; ++j)
+	   if (rhoend < stop->xtol_abs[j] / fabs(s.scale[j]))
+	        rhoend = stop->xtol_abs[j] / fabs(s.scale[j]);
 
-  /* each equality constraint gives two inequality constraints */
-  m = nlopt_count_constraints(m, fc) + 2 * nlopt_count_constraints(p, h);
+     /* each equality constraint gives two inequality constraints */
+     m = nlopt_count_constraints(m, fc) + 2 * nlopt_count_constraints(p, h);
 
-  /* add constraints for lower/upper bounds (if any) */
-  for (j = 0; j < n; ++j) {
-    if (!nlopt_isinf(lb[j]))
-      ++m;
-    if (!nlopt_isinf(ub[j]))
-      ++m;
-  }
+     /* add constraints for lower/upper bounds (if any) */
+     for (j = 0; j < n; ++j) {
+	  if (!nlopt_isinf(lb[j]))
+	       ++m;
+	  if (!nlopt_isinf(ub[j]))
+	       ++m;
+     }
 
-  s.con_tol = (double *)malloc(sizeof(double) * m);
-  if (m && !s.con_tol) {
-    ret = NLOPT_OUT_OF_MEMORY;
-    goto done;
-  }
+     s.con_tol = (double *) malloc(sizeof(double) * m);
+     if (m && !s.con_tol) { ret = NLOPT_OUT_OF_MEMORY; goto done; }
 
-  for (j = 0; j < m; ++j)
-    s.con_tol[j] = 0;
-  for (j = i = 0; i < s.m_orig; ++i) {
-    unsigned ji = j, jnext = j + fc[i].m;
-    for (; j < jnext; ++j)
-      s.con_tol[j] = fc[i].tol[j - ji];
-  }
-  for (i = 0; i < s.p; ++i) {
-    unsigned ji = j, jnext = j + h[i].m;
-    for (; j < jnext; ++j)
-      s.con_tol[j] = h[i].tol[j - ji];
-    ji = j;
-    jnext = j + h[i].m;
-    for (; j < jnext; ++j)
-      s.con_tol[j] = h[i].tol[j - ji];
-  }
+     for (j = 0; j < m; ++j) s.con_tol[j] = 0;
+     for (j = i = 0; i < s.m_orig; ++i) {
+	  unsigned ji = j, jnext = j + fc[i].m;
+	  for (; j < jnext; ++j) s.con_tol[j] = fc[i].tol[j - ji];
+     }
+     for (i = 0; i < s.p; ++i) {
+	  unsigned ji = j, jnext = j + h[i].m;
+	  for (; j < jnext; ++j) s.con_tol[j] = h[i].tol[j - ji];
+	  ji = j; jnext = j + h[i].m;
+	  for (; j < jnext; ++j) s.con_tol[j] = h[i].tol[j - ji];
+     }
 
-  nlopt_rescale(n, s.scale, x, x);
-  ret = cobyla((int)n, (int)m, x, minf, rhobeg, rhoend, stop, s.lb, s.ub,
-               COBYLA_MSG_NONE, func_wrap, &s);
-  nlopt_unscale(n, s.scale, x, x);
+     nlopt_rescale(n, s.scale, x, x);
+     ret = cobyla((int) n, (int) m, x, minf, rhobeg, rhoend,
+		  stop, s.lb, s.ub, COBYLA_MSG_NONE, 
+		  func_wrap, &s);
+     nlopt_unscale(n, s.scale, x, x);
 
-  /* make sure e.g. rounding errors didn't push us slightly out of bounds */
-  for (j = 0; j < n; ++j) {
-    if (x[j] < lb[j])
-      x[j] = lb[j];
-    if (x[j] > ub[j])
-      x[j] = ub[j];
-  }
+     /* make sure e.g. rounding errors didn't push us slightly out of bounds */
+     for (j = 0; j < n; ++j) {
+	  if (x[j] < lb[j]) x[j] = lb[j];
+	  if (x[j] > ub[j]) x[j] = ub[j];
+     }
 
 done:
-  free(s.con_tol);
-  free(s.xtmp);
-  free(s.ub);
-  free(s.lb);
-  free(s.scale);
-  return ret;
+     free(s.con_tol);
+     free(s.xtmp);
+     free(s.ub);
+     free(s.lb);
+     free(s.scale);
+     return ret;
 }
 
 /**************************************************************************/
@@ -313,139 +284,138 @@ done:
    rather than use nlopt_urand, and set the initial seed deterministically. */
 
 #if defined(HAVE_STDINT_H)
-#include <stdint.h>
+#  include <stdint.h>
 #endif
 
 #ifndef HAVE_UINT32_T
-#if SIZEOF_UNSIGNED_LONG == 4
+#  if SIZEOF_UNSIGNED_LONG == 4
 typedef unsigned long uint32_t;
-#elif SIZEOF_UNSIGNED_INT == 4
+#  elif SIZEOF_UNSIGNED_INT == 4
 typedef unsigned int uint32_t;
-#else
-#error No 32-bit unsigned integer type
-#endif
+#  else
+#    error No 32-bit unsigned integer type
+#  endif
 #endif
 
 /* a simple linear congruential generator */
 
-static uint32_t lcg_rand(uint32_t *seed) {
-  return (*seed = *seed * 1103515245 + 12345);
+static uint32_t lcg_rand(uint32_t *seed)
+{
+     return (*seed = *seed * 1103515245 + 12345);
 }
 
-static double lcg_urand(uint32_t *seed, double a, double b) {
-  return a + lcg_rand(seed) * (b - a) / ((uint32_t)-1);
+static double lcg_urand(uint32_t *seed, double a, double b)
+{
+     return a + lcg_rand(seed) * (b - a) / ((uint32_t) -1);
 }
 
 /**************************************************************************/
 
-static nlopt_result
-cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
-       double rhoend, nlopt_stopping *stop, const double *lb, const double *ub,
-       int *iprint, double *con, double *sim, double *simi, double *datmat,
-       double *a, double *vsig, double *veta, double *sigbar, double *dx,
-       double *w, int *iact, cobyla_function *calcfc, func_wrap_state *state);
+static nlopt_result cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg, double rhoend,
+  nlopt_stopping *stop, const double *lb, const double *ub, int *iprint, double *con, double *sim,
+  double *simi, double *datmat, double *a, double *vsig, double *veta,
+  double *sigbar, double *dx, double *w, int *iact, cobyla_function *calcfc,
+  func_wrap_state *state);
 static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
-                           double *dx, int *ifull, int *iact, double *z__,
-                           double *zdota, double *vmultc, double *sdirn,
-                           double *dxnew, double *vmultd);
+  double *dx, int *ifull, int *iact, double *z__, double *zdota, double *vmultc,
+  double *sdirn, double *dxnew, double *vmultd);
 
 /* ------------------------------------------------------------------------ */
 
-nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg,
-                    double rhoend, nlopt_stopping *stop, const double *lb,
-                    const double *ub, int iprint, cobyla_function *calcfc,
-                    func_wrap_state *state) {
+nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double rhoend, nlopt_stopping *stop, const double *lb, const double *ub, int iprint,
+  cobyla_function *calcfc, func_wrap_state *state)
+{
   int icon, isim, isigb, idatm, iveta, isimi, ivsig, iwork, ia, idx, mpp;
   int *iact;
   double *w;
   nlopt_result rc;
 
-  /*
-   * This subroutine minimizes an objective function F(X) subject to M
-   * inequality constraints on X, where X is a vector of variables that has
-   * N components. The algorithm employs linear approximations to the
-   * objective and constraint functions, the approximations being formed by
-   * linear interpolation at N+1 points in the space of the variables.
-   * We regard these interpolation points as vertices of a simplex. The
-   * parameter RHO controls the size of the simplex and it is reduced
-   * automatically from RHOBEG to RHOEND. For each RHO the subroutine tries
-   * to achieve a good vector of variables for the current size, and then
-   * RHO is reduced until the value RHOEND is reached. Therefore RHOBEG and
-   * RHOEND should be set to reasonable initial changes to and the required
-   * accuracy in the variables respectively, but this accuracy should be
-   * viewed as a subject for experimentation because it is not guaranteed.
-   * The subroutine has an advantage over many of its competitors, however,
-   * which is that it treats each constraint individually when calculating
-   * a change to the variables, instead of lumping the constraints together
-   * into a single penalty function. The name of the subroutine is derived
-   * from the phrase Constrained Optimization BY Linear Approximations.
-   *
-   * The user must set the values of N, M, RHOBEG and RHOEND, and must
-   * provide an initial vector of variables in X. Further, the value of
-   * IPRINT should be set to 0, 1, 2 or 3, which controls the amount of
-   * printing during the calculation. Specifically, there is no output if
-   * IPRINT=0 and there is output only at the end of the calculation if
-   * IPRINT=1. Otherwise each new value of RHO and SIGMA is printed.
-   * Further, the vector of variables and some function information are
-   * given either when RHO is reduced or when each new value of F(X) is
-   * computed in the cases IPRINT=2 or IPRINT=3 respectively. Here SIGMA
-   * is a penalty parameter, it being assumed that a change to X is an
-   * improvement if it reduces the merit function
-   *      F(X)+SIGMA*MAX(0.0,-C1(X),-C2(X),...,-CM(X)),
-   * where C1,C2,...,CM denote the constraint functions that should become
-   * nonnegative eventually, at least to the precision of RHOEND. In the
-   * printed output the displayed term that is multiplied by SIGMA is
-   * called MAXCV, which stands for 'MAXimum Constraint Violation'. The
-   * argument MAXFUN is an int variable that must be set by the user to a
-   * limit on the number of calls of CALCFC, the purpose of this routine being
-   * given below. The value of MAXFUN will be altered to the number of calls
-   * of CALCFC that are made. The arguments W and IACT provide real and
-   * int arrays that are used as working space. Their lengths must be at
-   * least N*(3*N+2*M+11)+4*M+6 and M+1 respectively.
-   *
-   * In order to define the objective and constraint functions, we require
-   * a subroutine that has the name and arguments
-   *      SUBROUTINE CALCFC (N,M,X,F,CON)
-   *      DIMENSION X(*),CON(*)  .
-   * The values of N and M are fixed and have been defined already, while
-   * X is now the current vector of variables. The subroutine should return
-   * the objective and constraint functions at X in F and CON(1),CON(2),
-   * ...,CON(M). Note that we are trying to adjust X so that F(X) is as
-   * small as possible subject to the constraint functions being nonnegative.
-   *
-   * Partition the working space array W to provide the storage that is needed
-   * for the main calculation.
-   */
+/*
+ * This subroutine minimizes an objective function F(X) subject to M
+ * inequality constraints on X, where X is a vector of variables that has 
+ * N components. The algorithm employs linear approximations to the 
+ * objective and constraint functions, the approximations being formed by 
+ * linear interpolation at N+1 points in the space of the variables. 
+ * We regard these interpolation points as vertices of a simplex. The 
+ * parameter RHO controls the size of the simplex and it is reduced 
+ * automatically from RHOBEG to RHOEND. For each RHO the subroutine tries 
+ * to achieve a good vector of variables for the current size, and then 
+ * RHO is reduced until the value RHOEND is reached. Therefore RHOBEG and 
+ * RHOEND should be set to reasonable initial changes to and the required 
+ * accuracy in the variables respectively, but this accuracy should be 
+ * viewed as a subject for experimentation because it is not guaranteed. 
+ * The subroutine has an advantage over many of its competitors, however, 
+ * which is that it treats each constraint individually when calculating 
+ * a change to the variables, instead of lumping the constraints together 
+ * into a single penalty function. The name of the subroutine is derived 
+ * from the phrase Constrained Optimization BY Linear Approximations. 
+ *
+ * The user must set the values of N, M, RHOBEG and RHOEND, and must 
+ * provide an initial vector of variables in X. Further, the value of 
+ * IPRINT should be set to 0, 1, 2 or 3, which controls the amount of 
+ * printing during the calculation. Specifically, there is no output if 
+ * IPRINT=0 and there is output only at the end of the calculation if 
+ * IPRINT=1. Otherwise each new value of RHO and SIGMA is printed. 
+ * Further, the vector of variables and some function information are 
+ * given either when RHO is reduced or when each new value of F(X) is 
+ * computed in the cases IPRINT=2 or IPRINT=3 respectively. Here SIGMA 
+ * is a penalty parameter, it being assumed that a change to X is an 
+ * improvement if it reduces the merit function 
+ *      F(X)+SIGMA*MAX(0.0,-C1(X),-C2(X),...,-CM(X)), 
+ * where C1,C2,...,CM denote the constraint functions that should become 
+ * nonnegative eventually, at least to the precision of RHOEND. In the 
+ * printed output the displayed term that is multiplied by SIGMA is 
+ * called MAXCV, which stands for 'MAXimum Constraint Violation'. The 
+ * argument MAXFUN is an int variable that must be set by the user to a 
+ * limit on the number of calls of CALCFC, the purpose of this routine being 
+ * given below. The value of MAXFUN will be altered to the number of calls 
+ * of CALCFC that are made. The arguments W and IACT provide real and 
+ * int arrays that are used as working space. Their lengths must be at 
+ * least N*(3*N+2*M+11)+4*M+6 and M+1 respectively. 
+ *
+ * In order to define the objective and constraint functions, we require 
+ * a subroutine that has the name and arguments 
+ *      SUBROUTINE CALCFC (N,M,X,F,CON) 
+ *      DIMENSION X(*),CON(*)  . 
+ * The values of N and M are fixed and have been defined already, while 
+ * X is now the current vector of variables. The subroutine should return 
+ * the objective and constraint functions at X in F and CON(1),CON(2), 
+ * ...,CON(M). Note that we are trying to adjust X so that F(X) is as 
+ * small as possible subject to the constraint functions being nonnegative. 
+ *
+ * Partition the working space array W to provide the storage that is needed 
+ * for the main calculation.
+ */
 
   *(stop->nevals_p) = 0;
 
-  if (n == 0) {
-    if (iprint >= 1)
-      nlopt_stop_log(stop, "cobyla: N==0.\n");
+  if (n == 0)
+  {
+    if (iprint>=1) nlopt_stop_log(stop, "cobyla: N==0.\n");
     return NLOPT_SUCCESS;
   }
 
-  if (n < 0 || m < 0) {
-    if (iprint >= 1)
-      nlopt_stop_log(stop, "cobyla: N<0 or M<0.\n");
+  if (n < 0 || m < 0)
+  {
+    if (iprint>=1) nlopt_stop_log(stop, "cobyla: N<0 or M<0.\n");
     return NLOPT_INVALID_ARGS;
   }
 
   /* workspace allocation */
-  w = (double *)malloc(U(n * (3 * n + 2 * m + 11) + 4 * m + 6) * sizeof(*w));
-  if (w == NULL) {
-    if (iprint >= 1)
-      nlopt_stop_log(stop, "cobyla: memory allocation error.\n");
+  w = (double*) malloc(U(n*(3*n+2*m+11)+4*m+6)*sizeof(*w));
+  if (w == NULL)
+  {
+    if (iprint>=1) nlopt_stop_log(stop, "cobyla: memory allocation error.\n");
     return NLOPT_OUT_OF_MEMORY;
   }
-  iact = (int *)malloc(U(m + 1) * sizeof(*iact));
-  if (iact == NULL) {
-    if (iprint >= 1)
-      nlopt_stop_log(stop, "cobyla: memory allocation error.\n");
+  iact = (int*)malloc(U(m+1)*sizeof(*iact));
+  if (iact == NULL)
+  {
+    if (iprint>=1) nlopt_stop_log(stop, "cobyla: memory allocation error.\n");
     free(w);
     return NLOPT_OUT_OF_MEMORY;
   }
-
+  
   /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
    * tracking */
   {
@@ -481,10 +451,9 @@ nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg,
   isigb = iveta + n;
   idx = isigb + n;
   iwork = idx + n;
-  rc = cobylb(&n, &m, &mpp, &x[1], minf, &rhobeg, rhoend, stop, &lb[1], &ub[1],
-              &iprint, &w[icon], &w[isim], &w[isimi], &w[idatm], &w[ia],
-              &w[ivsig], &w[iveta], &w[isigb], &w[idx], &w[iwork], &iact[1],
-              calcfc, state);
+  rc = cobylb(&n, &m, &mpp, &x[1], minf, &rhobeg, rhoend, stop, &lb[1], &ub[1], &iprint,
+      &w[icon], &w[isim], &w[isimi], &w[idatm], &w[ia], &w[ivsig], &w[iveta],
+      &w[isigb], &w[idx], &w[iwork], &iact[1], calcfc, state);
 
   /* Parameter adjustments (reverse) */
   ++iact;
@@ -492,20 +461,22 @@ nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg,
 
   free(w);
   free(iact);
-
+  
   return rc;
 } /* cobyla */
 
 /* ------------------------------------------------------------------------- */
-static nlopt_result
-cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
-       double rhoend, nlopt_stopping *stop, const double *lb, const double *ub,
-       int *iprint, double *con, double *sim, double *simi, double *datmat,
-       double *a, double *vsig, double *veta, double *sigbar, double *dx,
-       double *w, int *iact, cobyla_function *calcfc, func_wrap_state *state) {
+static nlopt_result cobylb(int *n, int *m, int *mpp,
+   double *x, double *minf, double *rhobeg, double rhoend,
+    nlopt_stopping *stop, const double *lb, const double *ub,
+    int *iprint, double *con, double *sim, double *simi, 
+    double *datmat, double *a, double *vsig, double *veta,
+     double *sigbar, double *dx, double *w, int *iact, cobyla_function *calcfc,
+     func_wrap_state *state)
+{
   /* System generated locals */
-  int sim_dim1, sim_offset, simi_dim1, simi_offset, datmat_dim1, datmat_offset,
-      a_dim1, a_offset, i__1, i__2, i__3;
+  int sim_dim1, sim_offset, simi_dim1, simi_offset, datmat_dim1, 
+      datmat_offset, a_dim1, a_offset, i__1, i__2, i__3;
   double d__1, d__2;
 
   /* Local variables */
@@ -530,17 +501,17 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
   int mp, np, iz, ibrnch;
   int nbest, ifull = 0, iptem, jdrop;
   nlopt_result rc = NLOPT_SUCCESS;
-  uint32_t seed = (uint32_t)(*n + *m); /* arbitrary deterministic LCG seed */
+  uint32_t seed = (uint32_t) (*n + *m); /* arbitrary deterministic LCG seed */
   int feasible;
 
   /* SGJ, 2008: added code to keep track of minimum feasible function val */
   *minf = HUGE_VAL;
 
-  /* Set the initial values of some parameters. The last column of SIM holds */
-  /* the optimal vertex of the current simplex, and the preceding N columns */
-  /* hold the displacements from the optimal vertex to the other vertices. */
-  /* Further, SIMI holds the inverse of the matrix that is contained in the */
-  /* first N columns of SIM. */
+/* Set the initial values of some parameters. The last column of SIM holds */
+/* the optimal vertex of the current simplex, and the preceding N columns */
+/* hold the displacements from the optimal vertex to the other vertices. */
+/* Further, SIMI holds the inverse of the matrix that is contained in the */
+/* first N columns of SIM. */
 
   /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
    * tracking */
@@ -610,7 +581,7 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
   }
 
   /* Function Body */
-  iptem = MIN2(*n, 4);
+  iptem = MIN2(*n,4);
   iptemp = iptem + 1;
   np = *n + 1;
   mp = *m + 1;
@@ -622,9 +593,8 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
   parmu = 0.;
   if (*iprint >= 2) {
     nlopt_stop_log(stop,
-                   "cobyla: the initial value of RHO is %12.6E and PARMU is "
-                   "set to zero.\n",
-                   rho);
+      "cobyla: the initial value of RHO is %12.6E and PARMU is set to zero.\n",
+      rho);
   }
   temp = 1. / rho;
   i__1 = *n;
@@ -640,12 +610,12 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
 #if ENFORCE_BOUNDS
     /* SGJ: make sure step rhocur stays inside [lb,ub] */
     if (x[i__] + rhocur > ub[i__]) {
-      if (x[i__] - rhocur >= lb[i__])
-        rhocur = -rhocur;
-      else if (ub[i__] - x[i__] > x[i__] - lb[i__])
-        rhocur = 0.5 * (ub[i__] - x[i__]);
-      else
-        rhocur = 0.5 * (x[i__] - lb[i__]);
+	 if (x[i__] - rhocur >= lb[i__])
+	      rhocur = -rhocur;
+	 else if (ub[i__] - x[i__] > x[i__] - lb[i__])
+	      rhocur = 0.5 * (ub[i__] - x[i__]);
+	 else
+	      rhocur = 0.5 * (x[i__] - lb[i__]);
     }
 #endif
     sim[i__ + i__ * sim_dim1] = rhocur;
@@ -654,27 +624,24 @@ cobylb(int *n, int *m, int *mpp, double *x, double *minf, double *rhobeg,
   jdrop = np;
   ibrnch = 0;
 
-  /* Make the next call of the user-supplied subroutine CALCFC. These */
-  /* instructions are also used for calling CALCFC during the iterations of */
-  /* the algorithm. */
+/* Make the next call of the user-supplied subroutine CALCFC. These */
+/* instructions are also used for calling CALCFC during the iterations of */
+/* the algorithm. */
 
   /* SGJ comment: why the hell couldn't he just use a damn subroutine?
      #*&!%*@ Fortran-66 spaghetti code */
 
 L40:
-  if (nlopt_stop_forced(stop))
-    rc = NLOPT_FORCED_STOP;
+  if (nlopt_stop_forced(stop)) rc = NLOPT_FORCED_STOP;
   else if (*(stop->nevals_p) > 0) {
-    if (nlopt_stop_evals(stop))
-      rc = NLOPT_MAXEVAL_REACHED;
-    else if (nlopt_stop_time(stop))
-      rc = NLOPT_MAXTIME_REACHED;
+       if (nlopt_stop_evals(stop)) rc = NLOPT_MAXEVAL_REACHED;
+       else if (nlopt_stop_time(stop)) rc = NLOPT_MAXTIME_REACHED;
   }
-  if (rc != NLOPT_SUCCESS)
-    goto L600;
+  if (rc != NLOPT_SUCCESS) goto L600;
 
-  ++*(stop->nevals_p);
-  if (calcfc(*n, *m, &x[1], &f, &con[1], state)) {
+  ++ *(stop->nevals_p);
+  if (calcfc(*n, *m, &x[1], &f, &con[1], state))
+  {
     if (*iprint >= 1) {
       nlopt_stop_log(stop, "cobyla: user requested end of minimization.\n");
     }
@@ -688,33 +655,31 @@ L40:
     i__1 = *m;
     for (k = 1; k <= i__1; ++k) {
       d__1 = resmax, d__2 = -con[k];
-      resmax = MAX2(d__1, d__2);
-      if (d__2 > state->con_tol[k - 1])
-        feasible = 0; /* SGJ, 2010 */
+      resmax = MAX2(d__1,d__2);
+      if (d__2 > state->con_tol[k-1])
+	   feasible = 0; /* SGJ, 2010 */
     }
   }
 
   /* SGJ, 2008: check for minf_max reached by feasible point */
   if (f < stop->minf_max && feasible) {
-    rc = NLOPT_MINF_MAX_REACHED;
-    goto L620; /* not L600 because we want to use current x, f, resmax */
+       rc = NLOPT_MINF_MAX_REACHED;
+       goto L620; /* not L600 because we want to use current x, f, resmax */
   }
 
   if (*(stop->nevals_p) == *iprint - 1 || *iprint == 3) {
     nlopt_stop_log(stop, "cobyla: NFVALS = %4d, F =%13.6E, MAXCV =%13.6E\n",
-                   *(stop->nevals_p), f, resmax);
+	    *(stop->nevals_p), f, resmax);
     i__1 = iptem;
     nlopt_stop_log(stop, "cobyla: X =");
     for (i__ = 1; i__ <= i__1; ++i__) {
-      if (i__ > 1)
-        nlopt_stop_log(stop, "  ");
+      if (i__>1) nlopt_stop_log(stop, "  ");
       nlopt_stop_log(stop, "%13.6E", x[i__]);
     }
     if (iptem < *n) {
       i__1 = *n;
       for (i__ = iptemp; i__ <= i__1; ++i__) {
-        if (!((i__ - 1) % 4))
-          nlopt_stop_log(stop, "\ncobyla:  ");
+        if (!((i__-1) % 4)) nlopt_stop_log(stop, "\ncobyla:  ");
         nlopt_stop_log(stop, "%15.6E", x[i__]);
       }
     }
@@ -726,12 +691,11 @@ L40:
     goto L440;
   }
 
-  /* Set the recently calculated function values in a column of DATMAT. This */
-  /* array has a column for each vertex of the current simplex, the entries of
-   */
-  /* each column being the values of the constraint functions (if any) */
-  /* followed by the objective function and the greatest constraint violation */
-  /* at the vertex. */
+/* Set the recently calculated function values in a column of DATMAT. This */
+/* array has a column for each vertex of the current simplex, the entries of */
+/* each column being the values of the constraint functions (if any) */
+/* followed by the objective function and the greatest constraint violation */
+/* at the vertex. */
 
   i__1 = *mpp;
   for (k = 1; k <= i__1; ++k) {
@@ -741,10 +705,9 @@ L40:
     goto L130;
   }
 
-  /* Exchange the new vertex of the initial simplex with the optimal vertex if
-   */
-  /* necessary. Then, if the initial simplex is not complete, pick its next */
-  /* vertex and calculate the function values there. */
+/* Exchange the new vertex of the initial simplex with the optimal vertex if */
+/* necessary. Then, if the initial simplex is not complete, pick its next */
+/* vertex and calculate the function values there. */
 
   if (jdrop <= *n) {
     if (datmat[mp + np * datmat_dim1] <= f) {
@@ -757,7 +720,8 @@ L40:
       sim[jdrop + np * sim_dim1] = x[jdrop];
       i__1 = *mpp;
       for (k = 1; k <= i__1; ++k) {
-        datmat[k + jdrop * datmat_dim1] = datmat[k + np * datmat_dim1];
+        datmat[k + jdrop * datmat_dim1] = datmat[k + np * datmat_dim1]
+            ;
         datmat[k + np * datmat_dim1] = con[k];
       }
       i__1 = jdrop;
@@ -782,34 +746,36 @@ L40:
 L130:
   ibrnch = 1;
 
-  /* Identify the optimal vertex of the current simplex. */
+/* Identify the optimal vertex of the current simplex. */
 
 L140:
-  phimin =
-      datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * datmat_dim1];
+  phimin = datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * 
+      datmat_dim1];
   nbest = np;
   i__1 = *n;
   for (j = 1; j <= i__1; ++j) {
-    temp =
-        datmat[mp + j * datmat_dim1] + parmu * datmat[*mpp + j * datmat_dim1];
+    temp = datmat[mp + j * datmat_dim1] + parmu * datmat[*mpp + j * 
+        datmat_dim1];
     if (temp < phimin) {
       nbest = j;
       phimin = temp;
     } else if (temp == phimin && parmu == 0.) {
-      if (datmat[*mpp + j * datmat_dim1] < datmat[*mpp + nbest * datmat_dim1]) {
+      if (datmat[*mpp + j * datmat_dim1] < datmat[*mpp + nbest * 
+          datmat_dim1]) {
         nbest = j;
       }
     }
   }
 
-  /* Switch the best vertex into pole position if it is not there already, */
-  /* and also update SIM, SIMI and DATMAT. */
+/* Switch the best vertex into pole position if it is not there already, */
+/* and also update SIM, SIMI and DATMAT. */
 
   if (nbest <= *n) {
     i__1 = *mpp;
     for (i__ = 1; i__ <= i__1; ++i__) {
       temp = datmat[i__ + np * datmat_dim1];
-      datmat[i__ + np * datmat_dim1] = datmat[i__ + nbest * datmat_dim1];
+      datmat[i__ + np * datmat_dim1] = datmat[i__ + nbest * datmat_dim1]
+          ;
       datmat[i__ + nbest * datmat_dim1] = temp;
     }
     i__1 = *n;
@@ -827,8 +793,8 @@ L140:
     }
   }
 
-  /* Make an error return if SIGI is a poor approximation to the inverse of */
-  /* the leading N by N submatrix of SIG. */
+/* Make an error return if SIGI is a poor approximation to the inverse of */
+/* the leading N by N submatrix of SIG. */
 
   error = 0.;
   i__1 = *n;
@@ -840,12 +806,11 @@ L140:
         temp += -1.;
       }
       i__3 = *n;
-      for (k = 1; k <= i__3; ++k)
-        if (sim[k + j * sim_dim1] != 0) {
-          temp += simi[i__ + k * simi_dim1] * sim[k + j * sim_dim1];
-        }
+      for (k = 1; k <= i__3; ++k) if (sim[k + j * sim_dim1] != 0) {
+        temp += simi[i__ + k * simi_dim1] * sim[k + j * sim_dim1];
+      }
       d__1 = error, d__2 = fabs(temp);
-      error = MAX2(d__1, d__2);
+      error = MAX2(d__1,d__2);
     }
   }
   if (error > .1) {
@@ -856,10 +821,10 @@ L140:
     goto L600;
   }
 
-  /* Calculate the coefficients of the linear approximations to the objective */
-  /* and constraint functions, placing minus the objective function gradient */
-  /* after the constraint gradients in the array A. The vector W is used for */
-  /* working space. */
+/* Calculate the coefficients of the linear approximations to the objective */
+/* and constraint functions, placing minus the objective function gradient */
+/* after the constraint gradients in the array A. The vector W is used for */
+/* working space. */
 
   i__2 = mp;
   for (k = 1; k <= i__2; ++k) {
@@ -882,8 +847,8 @@ L140:
     }
   }
 
-  /* Calculate the values of sigma and eta, and set IFLAG=0 if the current */
-  /* simplex is not acceptable. */
+/* Calculate the values of sigma and eta, and set IFLAG=0 if the current */
+/* simplex is not acceptable. */
 
   iflag = 1;
   parsig = alpha * rho;
@@ -906,8 +871,8 @@ L140:
     }
   }
 
-  /* If a new vertex is needed to improve acceptability, then decide which */
-  /* vertex to drop from the simplex. */
+/* If a new vertex is needed to improve acceptability, then decide which */
+/* vertex to drop from the simplex. */
 
   if (ibrnch == 1 || iflag == 1) {
     goto L370;
@@ -931,7 +896,7 @@ L140:
     }
   }
 
-  /* Calculate the step to the new vertex and its sign. */
+/* Calculate the step to the new vertex and its sign. */
 
   temp = gamma_ * rho * vsig[jdrop];
   i__1 = *n;
@@ -950,9 +915,9 @@ L140:
     if (k < mp) {
       temp = datmat[k + np * datmat_dim1];
       d__1 = cvmaxp, d__2 = -sum - temp;
-      cvmaxp = MAX2(d__1, d__2);
+      cvmaxp = MAX2(d__1,d__2);
       d__1 = cvmaxm, d__2 = sum - temp;
-      cvmaxm = MAX2(d__1, d__2);
+      cvmaxm = MAX2(d__1,d__2);
     }
   }
   dxsign = 1.;
@@ -960,7 +925,7 @@ L140:
     dxsign = -1.;
   }
 
-  /* Update the elements of SIM and SIMI, and set the next X. */
+/* Update the elements of SIM and SIMI, and set the next X. */
 
   temp = 0.;
   i__1 = *n;
@@ -970,18 +935,18 @@ L140:
     /* SGJ: make sure dx step says in [lb,ub] */
 #if ENFORCE_BOUNDS
     {
-      double xi = sim[i__ + np * sim_dim1];
+	 double xi = sim[i__ + np * sim_dim1];
     fixdx:
-      if (xi + dx[i__] > ub[i__])
-        dx[i__] = -dx[i__];
-      if (xi + dx[i__] < lb[i__]) {
-        if (xi - dx[i__] <= ub[i__])
-          dx[i__] = -dx[i__];
-        else { /* try again with halved step */
-          dx[i__] *= 0.5;
-          goto fixdx;
-        }
-      }
+	 if (xi + dx[i__] > ub[i__])
+	      dx[i__] = -dx[i__];
+	 if (xi + dx[i__] < lb[i__]) {
+	      if (xi - dx[i__] <= ub[i__])
+		   dx[i__] = -dx[i__];
+	      else { /* try again with halved step */
+		   dx[i__] *= 0.5;
+		   goto fixdx;
+	      }
+	 }
     }
 #endif
     sim[i__ + jdrop * sim_dim1] = dx[i__];
@@ -1001,14 +966,15 @@ L140:
       }
       i__2 = *n;
       for (i__ = 1; i__ <= i__2; ++i__) {
-        simi[j + i__ * simi_dim1] -= temp * simi[jdrop + i__ * simi_dim1];
+        simi[j + i__ * simi_dim1] -= temp * simi[jdrop + i__ * 
+            simi_dim1];
       }
     }
     x[j] = sim[j + np * sim_dim1] + dx[j];
   }
   goto L40;
 
-  /* Calculate DX=x(*)-x(0). Branch if the length of DX is less than 0.5*RHO. */
+/* Calculate DX=x(*)-x(0). Branch if the length of DX is less than 0.5*RHO. */
 
 L370:
   iz = 1;
@@ -1017,21 +983,18 @@ L370:
   isdirn = ivmc + mp;
   idxnew = isdirn + *n;
   ivmd = idxnew + *n;
-  rc = trstlp(n, m, &a[a_offset], &con[1], &rho, &dx[1], &ifull, &iact[1],
-              &w[iz], &w[izdota], &w[ivmc], &w[isdirn], &w[idxnew], &w[ivmd]);
-  if (rc != NLOPT_SUCCESS)
-    goto L600;
+  rc = trstlp(n, m, &a[a_offset], &con[1], &rho, &dx[1], &ifull, &iact[1], &w[
+      iz], &w[izdota], &w[ivmc], &w[isdirn], &w[idxnew], &w[ivmd]);
+  if (rc != NLOPT_SUCCESS) goto L600;
 #if ENFORCE_BOUNDS
   /* SGJ: since the bound constraints are linear, we should never get
      a dx that lies outside the [lb,ub] constraints here, but we'll
      enforce this anyway just to be paranoid */
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__) {
-    double xi = sim[i__ + np * sim_dim1];
-    if (xi + dx[i__] > ub[i__])
-      dx[i__] = ub[i__] - xi;
-    if (xi + dx[i__] < lb[i__])
-      dx[i__] = xi - lb[i__];
+       double xi = sim[i__ + np * sim_dim1];
+       if (xi + dx[i__] > ub[i__]) dx[i__] = ub[i__] - xi;
+       if (xi + dx[i__] < lb[i__]) dx[i__] = xi - lb[i__];
   }
 #endif
   if (ifull == 0) {
@@ -1047,8 +1010,8 @@ L370:
     }
   }
 
-  /* Predict the change to F and the new maximum constraint violation if the */
-  /* variables are altered from x(0) to x(0)+DX. */
+/* Predict the change to F and the new maximum constraint violation if the */
+/* variables are altered from x(0) to x(0)+DX. */
 
   resnew = 0.;
   con[mp] = 0.;
@@ -1060,14 +1023,14 @@ L370:
       sum -= a[i__ + k * a_dim1] * dx[i__];
     }
     if (k < mp) {
-      resnew = MAX2(resnew, sum);
+      resnew = MAX2(resnew,sum);
     }
   }
 
-  /* Increase PARMU if necessary and branch back if this change alters the */
-  /* optimal vertex. Otherwise PREREM and PREREC will be set to the predicted */
-  /* reductions in the merit function and the maximum constraint violation */
-  /* respectively. */
+/* Increase PARMU if necessary and branch back if this change alters the */
+/* optimal vertex. Otherwise PREREM and PREREC will be set to the predicted */
+/* reductions in the merit function and the maximum constraint violation */
+/* respectively. */
 
   barmu = 0.;
   prerec = datmat[*mpp + np * datmat_dim1] - resnew;
@@ -1079,17 +1042,18 @@ L370:
     if (*iprint >= 2) {
       nlopt_stop_log(stop, "cobyla: increase in PARMU to %12.6E\n", parmu);
     }
-    phi =
-        datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * datmat_dim1];
+    phi = datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * 
+        datmat_dim1];
     i__1 = *n;
     for (j = 1; j <= i__1; ++j) {
-      temp =
-          datmat[mp + j * datmat_dim1] + parmu * datmat[*mpp + j * datmat_dim1];
+      temp = datmat[mp + j * datmat_dim1] + parmu * datmat[*mpp + j * 
+          datmat_dim1];
       if (temp < phi) {
         goto L140;
       }
       if (temp == phi && parmu == 0.f) {
-        if (datmat[*mpp + j * datmat_dim1] < datmat[*mpp + np * datmat_dim1]) {
+        if (datmat[*mpp + j * datmat_dim1] < datmat[*mpp + np * 
+            datmat_dim1]) {
           goto L140;
         }
       }
@@ -1097,8 +1061,8 @@ L370:
   }
   prerem = parmu * prerec - sum;
 
-  /* Calculate the constraint and objective functions at x(*). Then find the */
-  /* actual reduction in the merit function. */
+/* Calculate the constraint and objective functions at x(*). Then find the */
+/* actual reduction in the merit function. */
 
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__) {
@@ -1107,8 +1071,8 @@ L370:
   ibrnch = 1;
   goto L40;
 L440:
-  vmold =
-      datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * datmat_dim1];
+  vmold = datmat[mp + np * datmat_dim1] + parmu * datmat[*mpp + np * 
+      datmat_dim1];
   vmnew = f + parmu * resmax;
   trured = vmold - vmnew;
   if (parmu == 0. && f == datmat[mp + np * datmat_dim1]) {
@@ -1116,10 +1080,10 @@ L440:
     trured = datmat[*mpp + np * datmat_dim1] - resmax;
   }
 
-  /* Begin the operations that decide whether x(*) should replace one of the */
-  /* vertices of the current simplex, the change being mandatory if TRURED is */
-  /* positive. Firstly, JDROP is set to the index of the vertex that is to be */
-  /* replaced. */
+/* Begin the operations that decide whether x(*) should replace one of the */
+/* vertices of the current simplex, the change being mandatory if TRURED is */
+/* positive. Firstly, JDROP is set to the index of the vertex that is to be */
+/* replaced. */
 
   ratio = 0.;
   if (trured <= 0.f) {
@@ -1141,7 +1105,7 @@ L440:
     sigbar[j] = temp * vsig[j];
   }
 
-  /* Calculate the value of ell. */
+/* Calculate the value of ell. */
 
   edgmax = delta * rho;
   l = 0;
@@ -1171,7 +1135,7 @@ L440:
     goto L550;
   }
 
-  /* Revise the simplex by updating the elements of SIM, SIMI and DATMAT. */
+/* Revise the simplex by updating the elements of SIM, SIMI and DATMAT. */
 
   temp = 0.;
   i__1 = *n;
@@ -1193,7 +1157,8 @@ L440:
       }
       i__2 = *n;
       for (i__ = 1; i__ <= i__2; ++i__) {
-        simi[j + i__ * simi_dim1] -= temp * simi[jdrop + i__ * simi_dim1];
+        simi[j + i__ * simi_dim1] -= temp * simi[jdrop + i__ * 
+            simi_dim1];
       }
     }
   }
@@ -1202,19 +1167,19 @@ L440:
     datmat[k + jdrop * datmat_dim1] = con[k];
   }
 
-  /* Branch back for further iterations with the current RHO. */
+/* Branch back for further iterations with the current RHO. */
 
   if (trured > 0. && trured >= prerem * .1) {
     /* SGJ, 2010: following a suggestion in the SAS manual (which
        mentions a similar modification to COBYLA, although they didn't
        publish their source code), increase rho if predicted reduction
        is sufficiently close to the actual reduction.  Otherwise,
-       COBLYA seems to easily get stuck making very small steps.
+       COBLYA seems to easily get stuck making very small steps. 
        Also require iflag != 0 (i.e., acceptable simplex), again
        following SAS suggestion (otherwise I get convergence failure
        in some cases.) */
     if (trured >= prerem * 0.9 && trured <= prerem * 1.1 && iflag) {
-      rho *= 2.0;
+	 rho *= 2.0;
     }
     goto L140;
   }
@@ -1230,15 +1195,15 @@ L550:
      sensible place to put the convergence test, as it is the same
      place that Powell checks the x tolerance (rho > rhoend). */
   {
-    double fbest = ifull == 1 ? f : datmat[mp + np * datmat_dim1];
-    if (fbest < *minf && nlopt_stop_ftol(stop, fbest, *minf)) {
-      rc = NLOPT_FTOL_REACHED;
-      goto L600;
-    }
-    *minf = fbest;
+       double fbest = ifull == 1 ? f : datmat[mp + np * datmat_dim1];
+       if (fbest < *minf && nlopt_stop_ftol(stop, fbest, *minf)) {
+	    rc = NLOPT_FTOL_REACHED;
+	    goto L600;
+       }
+       *minf = fbest;
   }
 
-  /* Otherwise reduce RHO if it is not at its least value and reset PARMU. */
+/* Otherwise reduce RHO if it is not at its least value and reset PARMU. */
 
   if (rho > rhoend) {
     rho *= .5;
@@ -1254,16 +1219,16 @@ L550:
         i__2 = *n;
         for (i__ = 1; i__ <= i__2; ++i__) {
           d__1 = cmin, d__2 = datmat[k + i__ * datmat_dim1];
-          cmin = MIN2(d__1, d__2);
+          cmin = MIN2(d__1,d__2);
           d__1 = cmax, d__2 = datmat[k + i__ * datmat_dim1];
-          cmax = MAX2(d__1, d__2);
+          cmax = MAX2(d__1,d__2);
         }
         if (k <= *m && cmin < cmax * .5) {
-          temp = MAX2(cmax, 0.) - cmin;
+          temp = MAX2(cmax,0.) - cmin;
           if (denom <= 0.) {
             denom = temp;
           } else {
-            denom = MIN2(denom, temp);
+            denom = MIN2(denom,temp);
           }
         }
       }
@@ -1274,37 +1239,34 @@ L550:
       }
     }
     if (*iprint >= 2) {
-      nlopt_stop_log(stop,
-                     "cobyla: reduction in RHO to %12.6E and PARMU =%13.6E\n",
-                     rho, parmu);
+      nlopt_stop_log(stop, "cobyla: reduction in RHO to %12.6E and PARMU =%13.6E\n",
+        rho, parmu);
     }
     if (*iprint == 2) {
       nlopt_stop_log(stop, "cobyla: NFVALS = %4d, F =%13.6E, MAXCV =%13.6E\n",
-                     *(stop->nevals_p), datmat[mp + np * datmat_dim1],
-                     datmat[*mpp + np * datmat_dim1]);
+        *(stop->nevals_p), datmat[mp + np * datmat_dim1], datmat[*mpp + np * datmat_dim1]);
 
       nlopt_stop_log(stop, "cobyla: X =");
       i__1 = iptem;
       for (i__ = 1; i__ <= i__1; ++i__) {
-        if (i__ > 1)
-          nlopt_stop_log(stop, "  ");
+        if (i__>1) nlopt_stop_log(stop, "  ");
         nlopt_stop_log(stop, "%13.6E", sim[i__ + np * sim_dim1]);
       }
       if (iptem < *n) {
         i__1 = *n;
         for (i__ = iptemp; i__ <= i__1; ++i__) {
-          if (!((i__ - 1) % 4))
-            nlopt_stop_log(stop, "\ncobyla:  ");
+          if (!((i__-1) % 4)) nlopt_stop_log(stop, "\ncobyla:  ");
           nlopt_stop_log(stop, "%15.6E", x[i__]);
         }
       }
       nlopt_stop_log(stop, "\n");
     }
     goto L140;
-  } else /* rho <= rhoend */
-    rc = rhoend > 0 ? NLOPT_XTOL_REACHED : NLOPT_ROUNDOFF_LIMITED;
+  }
+  else /* rho <= rhoend */
+       rc = rhoend > 0 ? NLOPT_XTOL_REACHED : NLOPT_ROUNDOFF_LIMITED;
 
-  /* Return the best calculated values of the variables. */
+/* Return the best calculated values of the variables. */
 
   if (*iprint >= 1) {
     nlopt_stop_log(stop, "cobyla: normal return.\n");
@@ -1323,19 +1285,17 @@ L620:
   *minf = f;
   if (*iprint >= 1) {
     nlopt_stop_log(stop, "cobyla: NFVALS = %4d, F =%13.6E, MAXCV =%13.6E\n",
-                   *(stop->nevals_p), f, resmax);
+	    *(stop->nevals_p), f, resmax);
     i__1 = iptem;
     nlopt_stop_log(stop, "cobyla: X =");
     for (i__ = 1; i__ <= i__1; ++i__) {
-      if (i__ > 1)
-        nlopt_stop_log(stop, "  ");
+      if (i__>1) nlopt_stop_log(stop, "  ");
       nlopt_stop_log(stop, "%13.6E", x[i__]);
     }
     if (iptem < *n) {
       i__1 = *n;
       for (i__ = iptemp; i__ <= i__1; ++i__) {
-        if (!((i__ - 1) % 4))
-          nlopt_stop_log(stop, "\ncobyla:  ");
+        if (!((i__-1) % 4)) nlopt_stop_log(stop, "\ncobyla:  ");
         nlopt_stop_log(stop, "%15.6E", x[i__]);
       }
     }
@@ -1345,10 +1305,11 @@ L620:
 } /* cobylb */
 
 /* ------------------------------------------------------------------------- */
-static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
-                           double *dx, int *ifull, int *iact, double *z__,
-                           double *zdota, double *vmultc, double *sdirn,
-                           double *dxnew, double *vmultd) {
+static nlopt_result trstlp(int *n, int *m, double *a, 
+    double *b, double *rho, double *dx, int *ifull, 
+    int *iact, double *z__, double *zdota, double *vmultc,
+     double *sdirn, double *dxnew, double *vmultd)
+{
   /* System generated locals */
   int a_dim1, a_offset, z_dim1, z_offset, i__1, i__2;
   double d__1, d__2;
@@ -1370,44 +1331,43 @@ static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
   int nact, icon = 0, mcon;
   int nactx = 0;
 
-  /* This subroutine calculates an N-component vector DX by applying the */
-  /* following two stages. In the first stage, DX is set to the shortest */
-  /* vector that minimizes the greatest violation of the constraints */
-  /*   A(1,K)*DX(1)+A(2,K)*DX(2)+...+A(N,K)*DX(N) .GE. B(K), K=2,3,...,M, */
-  /* subject to the Euclidean length of DX being at most RHO. If its length is
-   */
-  /* strictly less than RHO, then we use the resultant freedom in DX to */
-  /* minimize the objective function */
-  /*      -A(1,M+1)*DX(1)-A(2,M+1)*DX(2)-...-A(N,M+1)*DX(N) */
-  /* subject to no increase in any greatest constraint violation. This */
-  /* notation allows the gradient of the objective function to be regarded as */
-  /* the gradient of a constraint. Therefore the two stages are distinguished */
-  /* by MCON .EQ. M and MCON .GT. M respectively. It is possible that a */
-  /* degeneracy may prevent DX from attaining the target length RHO. Then the */
-  /* value IFULL=0 would be set, but usually IFULL=1 on return. */
 
-  /* In general NACT is the number of constraints in the active set and */
-  /* IACT(1),...,IACT(NACT) are their indices, while the remainder of IACT */
-  /* contains a permutation of the remaining constraint indices. Further, Z is
-   */
-  /* an orthogonal matrix whose first NACT columns can be regarded as the */
-  /* result of Gram-Schmidt applied to the active constraint gradients. For */
-  /* J=1,2,...,NACT, the number ZDOTA(J) is the scalar product of the J-th */
-  /* column of Z with the gradient of the J-th active constraint. DX is the */
-  /* current vector of variables and here the residuals of the active */
-  /* constraints should be zero. Further, the active constraints have */
-  /* nonnegative Lagrange multipliers that are held at the beginning of */
-  /* VMULTC. The remainder of this vector holds the residuals of the inactive */
-  /* constraints at DX, the ordering of the components of VMULTC being in */
-  /* agreement with the permutation of the indices of the constraints that is */
-  /* in IACT. All these residuals are nonnegative, which is achieved by the */
-  /* shift RESMAX that makes the least residual zero. */
+/* This subroutine calculates an N-component vector DX by applying the */
+/* following two stages. In the first stage, DX is set to the shortest */
+/* vector that minimizes the greatest violation of the constraints */
+/*   A(1,K)*DX(1)+A(2,K)*DX(2)+...+A(N,K)*DX(N) .GE. B(K), K=2,3,...,M, */
+/* subject to the Euclidean length of DX being at most RHO. If its length is */
+/* strictly less than RHO, then we use the resultant freedom in DX to */
+/* minimize the objective function */
+/*      -A(1,M+1)*DX(1)-A(2,M+1)*DX(2)-...-A(N,M+1)*DX(N) */
+/* subject to no increase in any greatest constraint violation. This */
+/* notation allows the gradient of the objective function to be regarded as */
+/* the gradient of a constraint. Therefore the two stages are distinguished */
+/* by MCON .EQ. M and MCON .GT. M respectively. It is possible that a */
+/* degeneracy may prevent DX from attaining the target length RHO. Then the */
+/* value IFULL=0 would be set, but usually IFULL=1 on return. */
 
-  /* Initialize Z and some other variables. The value of RESMAX will be */
-  /* appropriate to DX=0, while ICON will be the index of a most violated */
-  /* constraint if RESMAX is positive. Usually during the first stage the */
-  /* vector SDIRN gives a search direction that reduces all the active */
-  /* constraint violations by one simultaneously. */
+/* In general NACT is the number of constraints in the active set and */
+/* IACT(1),...,IACT(NACT) are their indices, while the remainder of IACT */
+/* contains a permutation of the remaining constraint indices. Further, Z is */
+/* an orthogonal matrix whose first NACT columns can be regarded as the */
+/* result of Gram-Schmidt applied to the active constraint gradients. For */
+/* J=1,2,...,NACT, the number ZDOTA(J) is the scalar product of the J-th */
+/* column of Z with the gradient of the J-th active constraint. DX is the */
+/* current vector of variables and here the residuals of the active */
+/* constraints should be zero. Further, the active constraints have */
+/* nonnegative Lagrange multipliers that are held at the beginning of */
+/* VMULTC. The remainder of this vector holds the residuals of the inactive */
+/* constraints at DX, the ordering of the components of VMULTC being in */
+/* agreement with the permutation of the indices of the constraints that is */
+/* in IACT. All these residuals are nonnegative, which is achieved by the */
+/* shift RESMAX that makes the least residual zero. */
+
+/* Initialize Z and some other variables. The value of RESMAX will be */
+/* appropriate to DX=0, while ICON will be the index of a most violated */
+/* constraint if RESMAX is positive. Usually during the first stage the */
+/* vector SDIRN gives a search direction that reduces all the active */
+/* constraint violations by one simultaneously. */
 
   /* Parameter adjustments - volatile breaks GCC/ASAN pointer-provenance
    * tracking */
@@ -1492,11 +1452,11 @@ static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
     sdirn[i__] = 0.;
   }
 
-  /* End the current stage of the calculation if 3 consecutive iterations */
-  /* have either failed to reduce the best calculated value of the objective */
-  /* function or to increase the number of active constraints since the best */
-  /* value was calculated. This strategy prevents cycling, but there is a */
-  /* remote possibility that it will cause premature termination. */
+/* End the current stage of the calculation if 3 consecutive iterations */
+/* have either failed to reduce the best calculated value of the objective */
+/* function or to increase the number of active constraints since the best */
+/* value was calculated. This strategy prevents cycling, but there is a */
+/* remote possibility that it will cause premature termination. */
 
 L60:
   optold = 0.;
@@ -1525,12 +1485,11 @@ L70:
     }
   }
 
-  /* If ICON exceeds NACT, then we add the constraint with index IACT(ICON) to
-   */
-  /* the active set. Apply Givens rotations so that the last N-NACT-1 columns */
-  /* of Z are orthogonal to the gradient of the new constraint, a scalar */
-  /* product being set to zero if its nonzero value could be due to computer */
-  /* rounding errors. The array DXNEW is used for working space. */
+/* If ICON exceeds NACT, then we add the constraint with index IACT(ICON) to */
+/* the active set. Apply Givens rotations so that the last N-NACT-1 columns */
+/* of Z are orthogonal to the gradient of the new constraint, a scalar */
+/* product being set to zero if its nonzero value could be due to computer */
+/* rounding errors. The array DXNEW is used for working space. */
 
   if (icon <= nact) {
     goto L260;
@@ -1567,9 +1526,10 @@ L100:
       tot = temp;
       i__1 = *n;
       for (i__ = 1; i__ <= i__1; ++i__) {
-        temp = alpha * z__[i__ + k * z_dim1] + beta * z__[i__ + kp * z_dim1];
-        z__[i__ + kp * z_dim1] =
-            alpha * z__[i__ + kp * z_dim1] - beta * z__[i__ + k * z_dim1];
+        temp = alpha * z__[i__ + k * z_dim1] + beta * z__[i__ + kp * 
+            z_dim1];
+        z__[i__ + kp * z_dim1] = alpha * z__[i__ + kp * z_dim1] - 
+            beta * z__[i__ + k * z_dim1];
         z__[i__ + k * z_dim1] = temp;
       }
     }
@@ -1577,8 +1537,8 @@ L100:
     goto L100;
   }
 
-  /* Add the new constraint if this can be done without a deletion from the */
-  /* active set. */
+/* Add the new constraint if this can be done without a deletion from the */
+/* active set. */
 
   if (tot != 0.) {
     ++nact;
@@ -1588,13 +1548,12 @@ L100:
     goto L210;
   }
 
-  /* The next instruction is reached if a deletion has to be made from the */
-  /* active set in order to make room for the new active constraint, because */
-  /* the new constraint gradient is a linear combination of the gradients of */
-  /* the old active constraints. Set the elements of VMULTD to the multipliers
-   */
-  /* of the linear combination. Further, set IOUT to the index of the */
-  /* constraint to be deleted, but branch if no suitable index can be found. */
+/* The next instruction is reached if a deletion has to be made from the */
+/* active set in order to make room for the new active constraint, because */
+/* the new constraint gradient is a linear combination of the gradients of */
+/* the old active constraints. Set the elements of VMULTD to the multipliers */
+/* of the linear combination. Further, set IOUT to the index of the */
+/* constraint to be deleted, but branch if no suitable index can be found. */
 
   ratio = -1.;
   k = nact;
@@ -1635,30 +1594,26 @@ L130:
     goto L490;
   }
 
-  /* Revise the Lagrange multipliers and reorder the active constraints so */
-  /* that the one to be replaced is at the end of the list. Also calculate the
-   */
-  /* new value of ZDOTA(NACT) and branch if it is not acceptable. */
+/* Revise the Lagrange multipliers and reorder the active constraints so */
+/* that the one to be replaced is at the end of the list. Also calculate the */
+/* new value of ZDOTA(NACT) and branch if it is not acceptable. */
 
   i__1 = nact;
-
-/* This pragma fixes a known problem compiling with VS2013 or VS2015 in Release
- */
-/* see
- * https://connect.microsoft.com/VisualStudio/feedback/details/1028781/c1001-on-release-build
- */
+  
+/* This pragma fixes a known problem compiling with VS2013 or VS2015 in Release */
+/* see https://connect.microsoft.com/VisualStudio/feedback/details/1028781/c1001-on-release-build */
 #if defined(_MSC_VER) && _MSC_VER >= 1800
-#pragma loop(no_vector)
+  #pragma loop(no_vector)
 #endif
   for (k = 1; k <= i__1; ++k) {
     d__1 = 0., d__2 = vmultc[k] - ratio * vmultd[k];
-    vmultc[k] = MAX2(d__1, d__2);
+    vmultc[k] = MAX2(d__1,d__2);
   }
   if (icon < nact) {
     isave = iact[icon];
     vsave = vmultc[icon];
     k = icon;
-  L170:
+L170:
     kp = k + 1;
     kw = iact[kp];
     sp = 0.;
@@ -1674,9 +1629,10 @@ L130:
     zdota[k] = temp;
     i__1 = *n;
     for (i__ = 1; i__ <= i__1; ++i__) {
-      temp = alpha * z__[i__ + kp * z_dim1] + beta * z__[i__ + k * z_dim1];
-      z__[i__ + kp * z_dim1] =
-          alpha * z__[i__ + k * z_dim1] - beta * z__[i__ + kp * z_dim1];
+      temp = alpha * z__[i__ + kp * z_dim1] + beta * z__[i__ + k * 
+          z_dim1];
+      z__[i__ + kp * z_dim1] = alpha * z__[i__ + k * z_dim1] - beta * 
+          z__[i__ + kp * z_dim1];
       z__[i__ + k * z_dim1] = temp;
     }
     iact[k] = kw;
@@ -1700,8 +1656,8 @@ L130:
   vmultc[icon] = 0.;
   vmultc[nact] = ratio;
 
-  /* Update IACT and ensure that the objective function continues to be */
-  /* treated as the last active constraint when MCON>M. */
+/* Update IACT and ensure that the objective function continues to be */
+/* treated as the last active constraint when MCON>M. */
 
 L210:
   iact[icon] = iact[nact];
@@ -1721,9 +1677,10 @@ L210:
     zdota[k] = temp;
     i__1 = *n;
     for (i__ = 1; i__ <= i__1; ++i__) {
-      temp = alpha * z__[i__ + nact * z_dim1] + beta * z__[i__ + k * z_dim1];
-      z__[i__ + nact * z_dim1] =
-          alpha * z__[i__ + k * z_dim1] - beta * z__[i__ + nact * z_dim1];
+      temp = alpha * z__[i__ + nact * z_dim1] + beta * z__[i__ + k * 
+          z_dim1];
+      z__[i__ + nact * z_dim1] = alpha * z__[i__ + k * z_dim1] - beta * 
+          z__[i__ + nact * z_dim1];
       z__[i__ + k * z_dim1] = temp;
     }
     iact[nact] = iact[k];
@@ -1733,8 +1690,8 @@ L210:
     vmultc[nact] = temp;
   }
 
-  /* If stage one is in progress, then set SDIRN to the direction of the next */
-  /* change to the current vector of variables. */
+/* If stage one is in progress, then set SDIRN to the direction of the next */
+/* change to the current vector of variables. */
 
   if (mcon > *m) {
     goto L320;
@@ -1753,14 +1710,14 @@ L210:
   }
   goto L340;
 
-  /* Delete the constraint that has the index IACT(ICON) from the active set. */
+/* Delete the constraint that has the index IACT(ICON) from the active set. */
 
 L260:
   if (icon < nact) {
     isave = iact[icon];
     vsave = vmultc[icon];
     k = icon;
-  L270:
+L270:
     kp = k + 1;
     kk = iact[kp];
     sp = 0.;
@@ -1776,9 +1733,10 @@ L260:
     zdota[k] = temp;
     i__1 = *n;
     for (i__ = 1; i__ <= i__1; ++i__) {
-      temp = alpha * z__[i__ + kp * z_dim1] + beta * z__[i__ + k * z_dim1];
-      z__[i__ + kp * z_dim1] =
-          alpha * z__[i__ + k * z_dim1] - beta * z__[i__ + kp * z_dim1];
+      temp = alpha * z__[i__ + kp * z_dim1] + beta * z__[i__ + k * 
+          z_dim1];
+      z__[i__ + kp * z_dim1] = alpha * z__[i__ + k * z_dim1] - beta * 
+          z__[i__ + kp * z_dim1];
       z__[i__ + k * z_dim1] = temp;
     }
     iact[k] = kk;
@@ -1792,8 +1750,8 @@ L260:
   }
   --nact;
 
-  /* If stage one is in progress, then set SDIRN to the direction of the next */
-  /* change to the current vector of variables. */
+/* If stage one is in progress, then set SDIRN to the direction of the next */
+/* change to the current vector of variables. */
 
   if (mcon > *m) {
     goto L320;
@@ -1809,7 +1767,7 @@ L260:
   }
   goto L340;
 
-  /* Pick the next search direction of stage two. */
+/* Pick the next search direction of stage two. */
 
 L320:
   temp = 1. / zdota[nact];
@@ -1818,11 +1776,11 @@ L320:
     sdirn[i__] = temp * z__[i__ + nact * z_dim1];
   }
 
-  /* Calculate the step to the boundary of the trust region or take the step */
-  /* that reduces RESMAX to zero. The two statements below that include the */
-  /* factor 1.0E-6 prevent some harmless underflows that occurred in a test */
-  /* calculation. Further, we skip the step if it could be zero within a */
-  /* reasonable tolerance for computer rounding errors. */
+/* Calculate the step to the boundary of the trust region or take the step */
+/* that reduces RESMAX to zero. The two statements below that include the */
+/* factor 1.0E-6 prevent some harmless underflows that occurred in a test */
+/* calculation. Further, we skip the step if it could be zero within a */
+/* reasonable tolerance for computer rounding errors. */
 
 L340:
   dd = *rho * *rho;
@@ -1853,17 +1811,16 @@ L340:
     if (step >= acca || acca >= accb) {
       goto L480;
     }
-    step = MIN2(step, resmax);
+    step = MIN2(step,resmax);
   }
 
   /* SGJ, 2010: check for error here */
-  if (nlopt_isinf(step))
-    return NLOPT_ROUNDOFF_LIMITED;
+  if (nlopt_isinf(step)) return NLOPT_ROUNDOFF_LIMITED;
 
-  /* Set DXNEW to the new variables if STEP is the steplength, and reduce */
-  /* RESMAX to the corresponding maximum residual if stage one is being done. */
-  /* Because DXNEW will be changed during the calculation of some Lagrange */
-  /* multipliers, it will be restored to the following value later. */
+/* Set DXNEW to the new variables if STEP is the steplength, and reduce */
+/* RESMAX to the corresponding maximum residual if stage one is being done. */
+/* Because DXNEW will be changed during the calculation of some Lagrange */
+/* multipliers, it will be restored to the following value later. */
 
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__) {
@@ -1880,14 +1837,14 @@ L340:
       for (i__ = 1; i__ <= i__2; ++i__) {
         temp -= a[i__ + kk * a_dim1] * dxnew[i__];
       }
-      resmax = MAX2(resmax, temp);
+      resmax = MAX2(resmax,temp);
     }
   }
 
-  /* Set VMULTD to the VMULTC vector that would occur if DX became DXNEW. A */
-  /* device is included to force VMULTD(K)=0.0 if deviations from this value */
-  /* can be attributed to computer rounding errors. First calculate the new */
-  /* Lagrange multipliers. */
+/* Set VMULTD to the VMULTC vector that would occur if DX became DXNEW. A */
+/* device is included to force VMULTD(K)=0.0 if deviations from this value */
+/* can be attributed to computer rounding errors. First calculate the new */
+/* Lagrange multipliers. */
 
   k = nact;
 L390:
@@ -1916,10 +1873,10 @@ L390:
   }
   if (mcon > *m) {
     d__1 = 0., d__2 = vmultd[nact];
-    vmultd[nact] = MAX2(d__1, d__2);
+    vmultd[nact] = MAX2(d__1,d__2);
   }
 
-  /* Complete VMULTC by finding the new constraint residuals. */
+/* Complete VMULTC by finding the new constraint residuals. */
 
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__) {
@@ -1947,7 +1904,7 @@ L390:
     }
   }
 
-  /* Calculate the fraction of the step from DX to DXNEW that will be taken. */
+/* Calculate the fraction of the step from DX to DXNEW that will be taken. */
 
   ratio = 1.;
   icon = 0;
@@ -1962,7 +1919,7 @@ L390:
     }
   }
 
-  /* Update DX, VMULTC and RESMAX. */
+/* Update DX, VMULTC and RESMAX. */
 
   temp = 1. - ratio;
   i__1 = *n;
@@ -1972,14 +1929,14 @@ L390:
   i__1 = mcon;
   for (k = 1; k <= i__1; ++k) {
     d__1 = 0., d__2 = temp * vmultc[k] + ratio * vmultd[k];
-    vmultc[k] = MAX2(d__1, d__2);
+    vmultc[k] = MAX2(d__1,d__2);
   }
   if (mcon == *m) {
     resmax = resold + ratio * (resmax - resold);
   }
 
-  /* If the full step is not acceptable then begin another iteration. */
-  /* Otherwise switch to stage two or end the calculation. */
+/* If the full step is not acceptable then begin another iteration. */
+/* Otherwise switch to stage two or end the calculation. */
 
   if (icon > 0) {
     goto L70;
@@ -1994,8 +1951,8 @@ L480:
   vmultc[mcon] = 0.;
   goto L60;
 
-  /* We employ any freedom that may be available to reduce the objective */
-  /* function before returning a DX whose length is less than RHO. */
+/* We employ any freedom that may be available to reduce the objective */
+/* function before returning a DX whose length is less than RHO. */
 
 L490:
   if (mcon == *m) {

@@ -25,10 +25,10 @@ static integer c_n1 = -1;
 /* | either the coordinates of a point to sample the function or the       | */
 /* | termination signal.                                                   | */
 /* +-----------------------------------------------------------------------+ */
-/* Subroutine */ int direct_pardirect_(fp fcn, doublereal *x, integer *n,
-	doublereal *eps, integer *maxf, integer *maxt, doublereal *minf,
-	doublereal *l, doublereal *u, integer *algmethod, integer *ierror,
-	FILE *logfile, doublereal *fglobal, doublereal *fglper, doublereal
+/* Subroutine */ int direct_pardirect_(fp fcn, doublereal *x, integer *n, 
+	doublereal *eps, integer *maxf, integer *maxt, doublereal *minf, 
+	doublereal *l, doublereal *u, integer *algmethod, integer *ierror, 
+	FILE *logfile, doublereal *fglobal, doublereal *fglper, doublereal 
 	*volper, doublereal *sigmaper, void *fcn_data)
 {
     /* System generated locals */
@@ -101,7 +101,7 @@ static integer c_n1 = -1;
 /* | Call Direct main routine. This routine calls DIRSamplef for the       | */
 /* | function evaluations, which are then done in parallel.                | */
 /* +-----------------------------------------------------------------------+ */
-	direct_direct_(fcn, &x[1], n, eps, maxf, maxt, minf, &l[1], &u[1],
+	direct_direct_(fcn, &x[1], n, eps, maxf, maxt, minf, &l[1], &u[1], 
 		algmethod, ierror, logfile, fglobal, fglper, volper, sigmaper,
 		fcn_data);
 /* +-----------------------------------------------------------------------+ */
@@ -147,16 +147,16 @@ static integer c_n1 = -1;
 /* | Subroutine for sampling. This sampling is done in parallel, the master| */
 /* | prozessor is also evaluating the function sometimes.                  | */
 /* +-----------------------------------------------------------------------+ */
-/* Subroutine */ void direct_dirsamplef_(doublereal *c__, integer *arrayi, doublereal
-	*delta, integer *sample, integer *new__, integer *length,
-	FILE *logfile, doublereal *f, integer *free, integer *maxi,
+/* Subroutine */ void direct_dirsamplef_(doublereal *c__, integer *arrayi, doublereal 
+	*delta, integer *sample, integer *new__, integer *length, 
+	FILE *logfile, doublereal *f, integer *free, integer *maxi, 
 	integer *point, fp fcn, doublereal *x, doublereal *l, doublereal *
-	minf, integer *minpos, doublereal *u, integer *n, integer *maxfunc,
+	minf, integer *minpos, doublereal *u, integer *n, integer *maxfunc, 
 	integer *maxdeep, integer *oops, doublereal *fmax, integer *
 	ifeasiblef, integer *iinfesiblef, void *fcn_data)
 {
     /* System generated locals */
-    integer length_dim1, length_offset, c_dim1, c_offset, f_dim1, f_offset,
+    integer length_dim1, length_offset, c_dim1, c_offset, f_dim1, f_offset, 
 	    i__1;
     doublereal d__1;
 
@@ -251,7 +251,7 @@ static integer c_n1 = -1;
 /* +-----------------------------------------------------------------------+ */
     datarec = 0;
     while(datarec < npts) {
-	if ((doublereal) datarec / (doublereal) nprocs - datarec / nprocs <
+	if ((doublereal) datarec / (doublereal) nprocs - datarec / nprocs < 
 		1e-5 && k <= npts) {
 	    i__1 = *n;
 	    for (i__ = 1; i__ <= i__1; ++i__) {
